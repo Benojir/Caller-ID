@@ -41,7 +41,7 @@ public class GetPhoneNumberInfo {
 
     public void getNumberInfo(OnFetchedInfoListener listener) {
         OkHttpClient client = new OkHttpClient();
-        
+
         String API_KEY = context.getString(R.string.api_key);
         Request request = new Request.Builder()
                 .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=IN&type=4&locAddr=&encoding=json")
