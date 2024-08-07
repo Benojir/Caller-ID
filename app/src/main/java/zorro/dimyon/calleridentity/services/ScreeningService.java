@@ -51,7 +51,7 @@ public class ScreeningService extends CallScreeningService {
 
             if (ContactsHelper.getContactNameByPhoneNumber(this, number).isEmpty()){
 
-                GetPhoneNumberInfo callerInfo = new GetPhoneNumberInfo(number);
+                GetPhoneNumberInfo callerInfo = new GetPhoneNumberInfo(this, number);
                 callerInfo.getNumberInfo(new GetPhoneNumberInfo.OnFetchedInfoListener() {
                     @Override
                     public void onSuccess(JSONObject numberInfo) {

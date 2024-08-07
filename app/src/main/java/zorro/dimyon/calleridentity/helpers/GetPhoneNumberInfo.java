@@ -1,5 +1,6 @@
 package zorro.dimyon.calleridentity.helpers;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -20,10 +21,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import zorro.dimyon.calleridentity.R;
 
 public class GetPhoneNumberInfo {
 
-    private static final String TAG = "MADARA";
+    private final String TAG = "MADARA";
+    private final Context context;
     private final String phoneNumber;
 
     public interface OnFetchedInfoListener {
@@ -31,14 +34,15 @@ public class GetPhoneNumberInfo {
         void onError(String errorMessage);
     }
 
-    public GetPhoneNumberInfo(String phoneNumber) {
+    public GetPhoneNumberInfo(Context context, String phoneNumber) {
+        this.context = context;
         this.phoneNumber = phoneNumber;
     }
 
     public void getNumberInfo(OnFetchedInfoListener listener) {
         OkHttpClient client = new OkHttpClient();
-
-        String API_KEY = "a2i0_--oVzLG9V5kWi_LFcrDqrYFKsYzwka0VoP2vc3ke8eFgB9MT6ysb7NCUpls";
+        
+        String API_KEY = context.getString(R.string.api_key);
         Request request = new Request.Builder()
                 .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=IN&type=4&locAddr=&encoding=json")
                 .addHeader("accept", "application/json")
