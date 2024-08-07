@@ -33,12 +33,16 @@ public class PopupService extends Service {
     public void onCreate() {
         super.onCreate();
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        startForeground(NOTIFICATION_ID, createNotification());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         String callerName = intent.getStringExtra("caller_name");
+        String phoneNumber = intent.getStringExtra("phone_number");
+
+        startForeground(NOTIFICATION_ID, createNotification(callerName, phoneNumber));
+
         showPopup(callerName);
         return START_NOT_STICKY;
     }
@@ -77,12 +81,12 @@ public class PopupService extends Service {
         }
     }
 
-    private Notification createNotification() {
+    private Notification createNotification(String callerName, String phoneNumber) {
         createNotificationChannel();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Call Popup")
-                .setContentText("Displaying call information")
+                .setContentTitle(callerName)
+                .setContentText(phoneNumber)
                 .setSmallIcon(R.drawable.notifications_active_24)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 

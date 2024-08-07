@@ -45,6 +45,7 @@ public class ScreeningService extends CallScreeningService {
 
             Intent intent = new Intent(this, PopupService.class);
             intent.putExtra("caller_name", number);
+            intent.putExtra("phone_number", number);
             startForegroundService(intent);
             Log.d(TAG, "onScreenCall: " + number);
         }
