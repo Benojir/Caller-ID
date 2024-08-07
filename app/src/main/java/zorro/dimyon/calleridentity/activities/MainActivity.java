@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import zorro.dimyon.calleridentity.R;
+import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
 import zorro.dimyon.calleridentity.helpers.GetPhoneNumberInfo;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,24 +35,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         checkAndRequestPermissions();
 
-//        TextView textView = findViewById(R.id.textView);
-//
-//        GetPhoneNumberInfo numberInfo = new GetPhoneNumberInfo("9735749430");
-//        numberInfo.getNumberInfo(new GetPhoneNumberInfo.OnFetchedInfoListener() {
-//            @Override
-//            public void onSuccess(String numberInfo) {
-//                textView.setText(numberInfo);
-//            }
-//
-//            @Override
-//            public void onError(String errorMessage) {
-//                textView.setText(errorMessage);
-//            }
-//        });
+
     }
 
     private void checkAndRequestPermissions() {

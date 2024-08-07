@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.LoginFragment"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:ignore="HardcodedText">
+
+    <LinearLayout
+        android:id="@+id/getOTPContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/phoneNumberET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:hint="Enter phone number with country code. Ex: +91123456789"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:minHeight="48dp"
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+
+        <Button
+            android:id="@+id/getOTPButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxWidth="320dp"
+            android:layout_marginHorizontal="30dp"
+            android:text="Get OTP"
+            tools:ignore="VisualLintButtonSize" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/verifyOTPContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/otpET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:hint="Enter OTP here"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:minHeight="48dp"
+            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+
+        <Button
+            android:id="@+id/verifyOTPButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="30dp"
+            android:text="Verify"
+            tools:ignore="VisualLintButtonSize" />
+    </LinearLayout>
+
+</LinearLayout>
