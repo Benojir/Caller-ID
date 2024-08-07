@@ -7,8 +7,14 @@ import android.telecom.Call;
 import android.telecom.CallScreeningService;
 import android.telecom.Connection;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import org.json.JSONObject;
+
+import zorro.dimyon.calleridentity.helpers.ContactsHelper;
+import zorro.dimyon.calleridentity.helpers.GetPhoneNumberInfo;
 
 public class ScreeningService extends CallScreeningService {
     private static final String TAG = "MADARA";
@@ -25,7 +31,6 @@ public class ScreeningService extends CallScreeningService {
         if (isIncoming) {
 
             CallResponse.Builder response = new CallResponse.Builder();
-            respondToCall(callDetails, response.build());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 switch (callDetails.getCallerNumberVerificationStatus()) {
@@ -33,6 +38,7 @@ public class ScreeningService extends CallScreeningService {
                         // Network verification failed, likely an invalid/spam call.
                         response.setDisallowCall(true);
                         response.setRejectCall(true);
+                        respondToCall(callDetails, response.build());
                         break;
                     case Connection.VERIFICATION_STATUS_PASSED:
                         // Network verification passed, likely a valid call.
@@ -43,13 +49,46 @@ public class ScreeningService extends CallScreeningService {
                 }
             }
 
-            Intent intent = new Intent(this, PopupService.class);
-            intent.putExtra("caller_name", number);
-            intent.putExtra("phone_number", number);
-            startForegroundService(intent);
-            Log.d(TAG, "onScreenCall: " + number);
+            if (ContactsHelper.getContactNameByPhoneNumber(this, number).isEmpty()){
+
+                GetPhoneNumberInfo callerInfo = new GetPhoneNumberInfo(number);
+                callerInfo.getNumberInfo(new GetPhoneNumberInfo.OnFetchedInfoListener() {
+                    @Override
+                    public void onSuccess(JSONObject numberInfo) {
+
+                        try {
+                            String callerName = numberInfo.getString("callerName");
+                            String address = numberInfo.getString("address");
+                            boolean isSpamCall = numberInfo.getBoolean("isSpamCall");
+                            String spamType = numberInfo.getString("spamType");
+
+                            if (isSpamCall) {
+                                response.setDisallowCall(true);
+                                response.setRejectCall(true);
+                                respondToCall(callDetails, response.build());
+
+                                Toast.makeText(ScreeningService.this, "Spam call blocked.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Start the PopupService
+                                Intent intent = new Intent(ScreeningService.this, PopupService.class);
+                                intent.putExtra("caller_name", callerName);
+                                intent.putExtra("phone_number", number);
+                                intent.putExtra("address", address);
+                                intent.putExtra("spam_type", spamType);
+                                startForegroundService(intent);
+                                Log.d(TAG, "onScreenCall: " + number);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "onSuccess: ", e);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, "onError: " + errorMessage);
+                    }
+                });
+            }
         }
     }
-
-
 }

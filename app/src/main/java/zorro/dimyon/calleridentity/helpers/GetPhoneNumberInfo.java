@@ -49,7 +49,7 @@ public class GetPhoneNumberInfo {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(@NonNull Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "onFailure: ", e);
                 // Handle failure
                 new Handler(Looper.getMainLooper()).post(() -> listener.onError("Request failed"));
@@ -78,10 +78,23 @@ public class GetPhoneNumberInfo {
                         JSONObject numberData = new JSONObject(responseString);
                         JSONObject data = numberData.getJSONArray("data").getJSONObject(0);
 
-                        String callerName = data.getString("name");
-                        String city = data.getJSONArray("addresses").getJSONObject(0).getString("city");
+                        String callerName = phoneNumber;
+                        String address = "Unknown";
                         boolean isSpamCall = false;
                         String spamType = "";
+
+                        if (data.has("name")) {
+                            callerName = data.getString("name");
+                        }
+
+                        if (data.has("addresses")) {
+                            JSONArray addresses = data.getJSONArray("addresses");
+                            if (addresses.length() > 0) {
+                                if (addresses.getJSONObject(0).has("city")){
+                                    address = addresses.getJSONObject(0).getString("city");
+                                }
+                            }
+                        }
 
                         if (data.has("spamInfo")) {
                             isSpamCall = true;
@@ -92,7 +105,7 @@ public class GetPhoneNumberInfo {
 
                         JSONObject numberInfo = new JSONObject();
                         numberInfo.put("callerName", callerName);
-                        numberInfo.put("city", city);
+                        numberInfo.put("address", address);
                         numberInfo.put("isSpamCall", isSpamCall);
                         numberInfo.put("spamType", spamType);
 

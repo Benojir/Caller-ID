@@ -40,14 +40,15 @@ public class PopupService extends Service {
 
         String callerName = intent.getStringExtra("caller_name");
         String phoneNumber = intent.getStringExtra("phone_number");
+        String address = intent.getStringExtra("address");
 
         startForeground(NOTIFICATION_ID, createNotification(callerName, phoneNumber));
 
-        showPopup(callerName);
+        showPopup(callerName, address);
         return START_NOT_STICKY;
     }
 
-    private void showPopup(String phoneNumber) {
+    private void showPopup(String phoneNumber, String address) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -66,7 +67,9 @@ public class PopupService extends Service {
         popupView = inflater.inflate(R.layout.floating_caller_info, tempRoot, false);
 
         TextView callerNameTV = popupView.findViewById(R.id.callerNameTV);
+        TextView callerAddressTV = popupView.findViewById(R.id.callerAddressTV);
         callerNameTV.setText(phoneNumber);
+        callerAddressTV.setText(address);
 
         SwipeDismissLayout swipeLayout = (SwipeDismissLayout) popupView;
         swipeLayout.setOnDismissListener(() -> {
