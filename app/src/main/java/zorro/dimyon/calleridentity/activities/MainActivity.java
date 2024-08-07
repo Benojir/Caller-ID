@@ -9,12 +9,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import zorro.dimyon.calleridentity.R;
+import zorro.dimyon.calleridentity.helpers.GetPhoneNumberInfo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +37,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         checkAndRequestPermissions();
+
+//        TextView textView = findViewById(R.id.textView);
+//
+//        GetPhoneNumberInfo numberInfo = new GetPhoneNumberInfo("9735749430");
+//        numberInfo.getNumberInfo(new GetPhoneNumberInfo.OnFetchedInfoListener() {
+//            @Override
+//            public void onSuccess(String numberInfo) {
+//                textView.setText(numberInfo);
+//            }
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//                textView.setText(errorMessage);
+//            }
+//        });
     }
 
     private void checkAndRequestPermissions() {

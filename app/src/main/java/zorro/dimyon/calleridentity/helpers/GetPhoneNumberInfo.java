@@ -1,9 +1,13 @@
 package zorro.dimyon.calleridentity.helpers;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +38,7 @@ public class GetPhoneNumberInfo {
     public void getNumberInfo(OnFetchedInfoListener listener) {
         OkHttpClient client = new OkHttpClient();
 
-        String API_KEY = "a2i0P--oPOCMh-2-IeBui8rjPb6i45xnOoPlVsDPycb6VQl2QtjR_6r0Q7Mn6HB1";
+        String API_KEY = "a2i0_--oVzLG9V5kWi_LFcrDqrYFKsYzwka0VoP2vc3ke8eFgB9MT6ysb7NCUpls";
         Request request = new Request.Builder()
                 .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=IN&type=4&locAddr=&encoding=json")
                 .addHeader("accept", "application/json")
@@ -48,13 +52,14 @@ public class GetPhoneNumberInfo {
             public void onFailure(@NonNull Call call, IOException e) {
                 Log.e(TAG, "onFailure: ", e);
                 // Handle failure
+                new Handler(Looper.getMainLooper()).post(() -> listener.onError("Request failed"));
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "onResponse: " + response.code());
-                    listener.onError("Response not successful");
+                    new Handler(Looper.getMainLooper()).post(() -> listener.onError("Response not successful"));
                 }
 
                 ResponseBody responseBody = response.body();
@@ -67,9 +72,36 @@ public class GetPhoneNumberInfo {
                     } else {
                         responseString = new String(responseBodyBytes);
                     }
+                    Log.d(TAG, "onResponse: " + responseString);
 
-                    // Output the response
-                    System.out.println(responseString);
+                    try {
+                        JSONObject numberData = new JSONObject(responseString);
+                        JSONObject data = numberData.getJSONArray("data").getJSONObject(0);
+
+                        String callerName = data.getString("name");
+                        String city = data.getJSONArray("addresses").getJSONObject(0).getString("city");
+                        boolean isSpamCall = false;
+                        String spamType = "";
+
+                        if (data.has("spamInfo")) {
+                            isSpamCall = true;
+                            if (data.getJSONObject("spamInfo").has("spamType")){
+                                spamType = data.getJSONObject("spamInfo").getString("spamType");
+                            }
+                        }
+
+                        JSONObject numberInfo = new JSONObject();
+                        numberInfo.put("callerName", callerName);
+                        numberInfo.put("city", city);
+                        numberInfo.put("isSpamCall", isSpamCall);
+                        numberInfo.put("spamType", spamType);
+
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onSuccess(numberInfo));
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "onResponse: ", e);
+                        listener.onError("JSON parsing error");
+                    }
                 }
             }
         });
