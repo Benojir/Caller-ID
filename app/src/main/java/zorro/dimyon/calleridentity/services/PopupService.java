@@ -38,8 +38,8 @@ public class PopupService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String phoneNumber = intent.getStringExtra("phone_number");
-        showPopup(phoneNumber);
+        String callerName = intent.getStringExtra("caller_name");
+        showPopup(callerName);
         return START_NOT_STICKY;
     }
 
