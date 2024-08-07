@@ -9,15 +9,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
-import zorro.dimyon.calleridentity.helpers.GetPhoneNumberInfo;
+import zorro.dimyon.calleridentity.fragments.LoginFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
         checkAndRequestPermissions();
 
+        // Create an instance of the fragment
+        LoginFragment loginFragment = new LoginFragment();
 
+        // Get the FragmentManager and start a transaction
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Add or replace the fragment in the container
+        fragmentTransaction.add(R.id.fragmentContainer, loginFragment);
+        fragmentTransaction.commit();
     }
 
     private void checkAndRequestPermissions() {
