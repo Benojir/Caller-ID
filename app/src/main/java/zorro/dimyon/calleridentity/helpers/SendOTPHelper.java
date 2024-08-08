@@ -2,6 +2,7 @@ package zorro.dimyon.calleridentity.helpers;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -27,7 +28,7 @@ public class SendOTPHelper {
     private final Context context;
     private final String phoneNumber;
     private final String countryCode;
-    private final String dialingCode;
+    private final int dialingCode;
 
     public interface OnDataRetrievedListener {
         void onSuccess(String response);
@@ -35,7 +36,7 @@ public class SendOTPHelper {
         void onFailure(String errorMessage);
     }
 
-    public SendOTPHelper(Context context, String phoneNumber, String countryCode, String dialingCode) {
+    public SendOTPHelper(Context context, String phoneNumber, String countryCode, int dialingCode) {
         this.context = context;
         this.phoneNumber = phoneNumber;
         this.countryCode = countryCode;
@@ -63,7 +64,6 @@ public class SendOTPHelper {
             device.put("manufacturer", Build.MANUFACTURER);
             device.put("model", Build.MODEL);
             device.put("osName", "Android");
-//                device.put("osVersion", Build.VERSION.RELEASE);
             device.put("osVersion", "10");
             device.put("mobileServices", new JSONArray().put("GMS"));
             installationDetails.put("device", device);
@@ -73,6 +73,8 @@ public class SendOTPHelper {
             data.put("phoneNumber", phoneNumber);
             data.put("region", "region-2");
             data.put("sequenceNo", 2);
+
+            Log.d("MADARA", "sendOTP: " + data.toString());
 
             RequestBody body = RequestBody.create(data.toString(), JSON);
             Request request = new Request.Builder()
@@ -86,10 +88,15 @@ public class SendOTPHelper {
 
             client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (!response.isSuccessful()) {
-                        listener.onFailure("An HTTP error occurred: " + response.code());
+                        try {
+                            ResponseBody responseBody = response.body();
+                            String errorBody = responseBody != null ? responseBody.string() : "No error body";
+                            listener.onFailure("An HTTP error occurred: " + response.code() + ", Error body: " + errorBody);
+                        } catch (Exception e) {
+                            listener.onFailure("An error occurred: " + e.getMessage());
+                        }
                         return;
                     }
 
@@ -101,16 +108,24 @@ public class SendOTPHelper {
                             return;
                         }
 
-                        String responseString = responseBody.string();
-                        listener.onSuccess(responseString);
+                        byte[] responseBodyBytes = responseBody.bytes();
 
+                        String responseString;
+
+                        if (CustomMethods.isGzipEncoded(responseBodyBytes)) {
+                            responseString = CustomMethods.decompressGzip(responseBodyBytes);
+                        } else {
+                            responseString = new String(responseBodyBytes);
+                        }
+
+                        listener.onSuccess(responseString);
                     } catch (Exception e) {
                         listener.onFailure("An error occurred: " + e.getMessage());
                     }
                 }
 
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     listener.onFailure("An HTTP error occurred: " + e.getMessage());
                 }
             });

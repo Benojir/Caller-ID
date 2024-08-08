@@ -36,6 +36,7 @@ import okhttp3.ResponseBody;
 import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.FragmentLoginBinding;
 import zorro.dimyon.calleridentity.helpers.CustomMethods;
+import zorro.dimyon.calleridentity.helpers.SendOTPHelper;
 
 public class LoginFragment extends Fragment {
 
@@ -52,13 +53,16 @@ public class LoginFragment extends Fragment {
 
         if (activity != null) {
             binding.ccp.registerCarrierNumberEditText(binding.phoneEditText);
-            String dialingCode = binding.ccp.getSelectedCountryCode();
 
             binding.getOtpButton.setOnClickListener(v -> {
+
+                int dialingCode = Integer.parseInt(binding.ccp.getSelectedCountryCode());
+                String countryNameCode = binding.ccp.getSelectedCountryNameCode();
                 String fullPhoneNumber = binding.ccp.getFullNumberWithPlus();
+                String justNumber = binding.phoneEditText.getText().toString().replaceAll("\\s", "");
+
                 if (isValidPhoneNumber(fullPhoneNumber)) {
-                    // Request OTP
-                    requestOtp(fullPhoneNumber, dialingCode);
+                    requestOtp(justNumber, dialingCode, countryNameCode);
                 } else {
                     Toast.makeText(activity, "Invalid phone number", Toast.LENGTH_SHORT).show();
                 }
@@ -70,92 +74,23 @@ public class LoginFragment extends Fragment {
 
 //    ----------------------------------------------------------------------------------------------
 
-    private void requestOtp(String fullPhoneNumber, String dialingCode) {
+    private void requestOtp(String justNumber, int dialingCode, String countryNameCode) {
 
         binding.getOtpContainer.setVisibility(View.GONE);
         binding.verifyOtpContainer.setVisibility(View.VISIBLE);
 
-        String deviceId = CustomMethods.getDeviceId(activity);
-        String countryCode = CustomMethods.getCountryCodeFromLocale(activity);
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        String osVersion = Build.VERSION.RELEASE;
 
-//        new Thread(() -> {
-            try {
-                JSONObject app = new JSONObject();
-                app.put("buildVersion", 8);
-                app.put("majorVersion", 14);
-                app.put("minorVersion", 16);
-                app.put("store", "GOOGLE_PLAY");
-
-                JSONArray mobileServices = new JSONArray();
-                mobileServices.put("GMS");
-
-                JSONObject device = new JSONObject();
-                device.put("deviceId", deviceId);
-                device.put("language", "en");
-                device.put("manufacturer", manufacturer);
-                device.put("model", model);
-                device.put("osName", "Android");
-                device.put("osVersion", osVersion);
-                device.put("mobileServices", mobileServices);
-
-                JSONObject installationDetails = new JSONObject();
-                installationDetails.put("app", app);
-                installationDetails.put("device", device);
-                installationDetails.put("language", "en");
-
-                JSONObject data = new JSONObject();
-                data.put("countryCode", countryCode);
-                data.put("dialingCode", dialingCode);
-                data.put("phoneNumber", "9732422565");
-                data.put("region", "region-2");
-                data.put("sequenceNo", 2);
-                data.put("installationDetails", installationDetails);
-
-
-                RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), data.toString());
-
-                Request request = new Request.Builder()
-                        .url(sendOtpPostApi)
-                        .post(body)
-                        .addHeader("content-type", "application/json; charset=UTF-8")
-                        .addHeader("accept-encoding", "gzip")
-                        .addHeader("user-agent", "Truecaller/11.75.5 (Android;10)")
-                        .addHeader("clientsecret", "lvc22mp3l1sfv6ujg83rd17btt")
-                        .build();
-
-                OkHttpClient client = new OkHttpClient();
-
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.e(TAG, "onFailure: ", e);
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
-                        Log.d(TAG, "onResponse: " + response.code());
-                        if (response.isSuccessful()) {
-
-                            ResponseBody responseBody = response.body();
-
-                            if (responseBody != null) {
-                                String responseString = responseBody.string();
-                                Log.d(TAG, "responseString: " + responseString);
-                            } else {
-                                Log.e(TAG, "requestOtp: Response body is null");
-                            }
-                        } else {
-                            Log.e(TAG, "requestOtp is not successful: " + response.message());
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "requestOtp: ", e);
+        SendOTPHelper sendOTPHelper = new SendOTPHelper(activity, justNumber, countryNameCode, dialingCode);
+        sendOTPHelper.sendOTP(new SendOTPHelper.OnDataRetrievedListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "onSuccess: " + response);
             }
-//        }).start();
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.d(TAG, "onFailure: " + errorMessage);
+            }
+        });
     }
 }

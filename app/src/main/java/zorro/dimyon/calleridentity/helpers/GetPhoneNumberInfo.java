@@ -11,9 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.zip.GZIPInputStream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -71,8 +69,8 @@ public class GetPhoneNumberInfo {
                     // Check if the response is gzip encoded
                     byte[] responseBodyBytes = responseBody.bytes();
                     String responseString;
-                    if (isGzipEncoded(responseBodyBytes)) {
-                        responseString = decompressGzip(responseBodyBytes);
+                    if (CustomMethods.isGzipEncoded(responseBodyBytes)) {
+                        responseString = CustomMethods.decompressGzip(responseBodyBytes);
                     } else {
                         responseString = new String(responseBodyBytes);
                     }
@@ -122,22 +120,6 @@ public class GetPhoneNumberInfo {
                 }
             }
         });
-    }
-
-    private static boolean isGzipEncoded(byte[] bytes) {
-        return bytes.length > 1 && bytes[0] == (byte) 0x1f && bytes[1] == (byte) 0x8b;
-    }
-
-    private static String decompressGzip(byte[] compressed) throws IOException {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(compressed);
-        GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream);
-        StringBuilder out = new StringBuilder();
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = gzipInputStream.read(buffer)) != -1) {
-            out.append(new String(buffer, 0, len));
-        }
-        return out.toString();
     }
 
 }
