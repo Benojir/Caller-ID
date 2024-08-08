@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_transparent_radius"
+    android:background="@drawable/background_floating_caller_info"
     tools:ignore="HardcodedText"
     android:padding="15dp">
 
@@ -23,7 +23,7 @@
             android:background="@drawable/background_circle_shape_imageview"
             android:contentDescription="Caller Info"
             android:padding="10dp"
-            android:src="@drawable/error_outline_24"
+            android:src="@drawable/verified_user_24"
             tools:ignore="ImageContrastCheck" />
 
     </FrameLayout>

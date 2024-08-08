@@ -23,6 +23,7 @@ import zorro.dimyon.calleridentity.helpers.VerifyOTPHelper;
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
+    private LoginSaver loginSaver;
     private final String TAG = "MADARA";
     private final JSONObject data = new JSONObject();
 
@@ -31,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        loginSaver = new LoginSaver(this);
 
         binding.ccp.registerCarrierNumberEditText(binding.phoneEditText);
 
@@ -123,6 +126,8 @@ public class LoginActivity extends AppCompatActivity {
                             data.put("phoneNumber", justNumber);
                             data.put("requestId", requestId);
 
+                            loginSaver.saveCountryNameCode(countryNameCode);
+
                             listener.onSuccess(data);
                         } else {
                             listener.onFailure("Failed to send OTP");
@@ -169,7 +174,6 @@ public class LoginActivity extends AppCompatActivity {
                                     if (responseObject.has("installationId")) {
                                         String installationId = responseObject.getString("installationId");
 
-                                        LoginSaver loginSaver = new LoginSaver(LoginActivity.this);
                                         loginSaver.saveLogin(installationId);
                                         listener.onComplete(true, "OTP verified");
                                     } else {

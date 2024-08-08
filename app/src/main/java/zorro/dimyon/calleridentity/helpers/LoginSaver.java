@@ -22,4 +22,13 @@ public class LoginSaver {
     public String getApiKey() {
         return preferences.getString("api_key", "");
     }
+
+    public void saveCountryNameCode(String countryNameCode) {
+        editor.putString("country_name_code", countryNameCode);
+        editor.apply();
+    }
+
+    public String getCountryNameCode() {
+        return preferences.getString("country_name_code", "IN");
+    }
 }

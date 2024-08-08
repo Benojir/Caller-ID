@@ -26,29 +26,32 @@ public class GetPhoneNumberInfo {
     private final String TAG = "MADARA";
     private final Context context;
     private final String phoneNumber;
+    private final String countryNameCode;
+    private final String apiKey;
 
     public interface OnFetchedInfoListener {
         void onSuccess(JSONObject numberInfo);
         void onError(String errorMessage);
     }
 
-    public GetPhoneNumberInfo(Context context, String phoneNumber) {
+    public GetPhoneNumberInfo(Context context, String phoneNumber, String countryNameCode, String apiKey) {
         this.context = context;
         this.phoneNumber = phoneNumber;
+        this.countryNameCode = countryNameCode;
+        this.apiKey = apiKey;
     }
 
     public void getNumberInfo(OnFetchedInfoListener listener) {
-        OkHttpClient client = new OkHttpClient();
 
-        String API_KEY = context.getString(R.string.api_key);
         Request request = new Request.Builder()
-                .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=IN&type=4&locAddr=&encoding=json")
+                .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=" + countryNameCode + "&type=4&locAddr=&encoding=json")
                 .addHeader("accept", "application/json")
-                .addHeader("authorization", "Bearer " + API_KEY)
+                .addHeader("authorization", "Bearer " + apiKey)
                 .addHeader("accept-encoding", "gzip")
                 .addHeader("user-agent", context.getString(R.string.truecaller_user_agent))
                 .build();
 
+        OkHttpClient client = new OkHttpClient();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {

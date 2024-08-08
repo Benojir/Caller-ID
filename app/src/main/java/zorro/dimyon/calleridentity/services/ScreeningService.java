@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import zorro.dimyon.calleridentity.helpers.ContactsHelper;
 import zorro.dimyon.calleridentity.helpers.GetPhoneNumberInfo;
+import zorro.dimyon.calleridentity.helpers.LoginSaver;
 
 public class ScreeningService extends CallScreeningService {
     private static final String TAG = "MADARA";
@@ -51,7 +52,11 @@ public class ScreeningService extends CallScreeningService {
 
             if (ContactsHelper.getContactNameByPhoneNumber(this, number).isEmpty()){
 
-                GetPhoneNumberInfo callerInfo = new GetPhoneNumberInfo(this, number);
+                LoginSaver loginSaver = new LoginSaver(this);
+                String countryNameCode = loginSaver.getCountryNameCode();
+                String apiKey = loginSaver.getApiKey();
+
+                GetPhoneNumberInfo callerInfo = new GetPhoneNumberInfo(this, number, countryNameCode, apiKey);
                 callerInfo.getNumberInfo(new GetPhoneNumberInfo.OnFetchedInfoListener() {
                     @Override
                     public void onSuccess(JSONObject numberInfo) {
