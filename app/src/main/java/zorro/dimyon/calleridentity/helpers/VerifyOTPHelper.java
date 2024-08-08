@@ -1,5 +1,7 @@
 package zorro.dimyon.calleridentity.helpers;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -55,9 +57,9 @@ public class VerifyOTPHelper {
                         try {
                             ResponseBody responseBody = response.body();
                             String errorBody = responseBody != null ? responseBody.string() : "No error body";
-                            listener.onFailure("An HTTP error occurred: " + response.code() + ", Error body: " + errorBody);
+                            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("HTTP error: " + response.code() + " - " + errorBody));
                         } catch (Exception e) {
-                            listener.onFailure("An error occurred: " + e.getMessage());
+                            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("An error occurred: " + e.getMessage()));
                         }
                         return;
                     }
@@ -66,7 +68,7 @@ public class VerifyOTPHelper {
                         ResponseBody responseBody = response.body();
 
                         if (responseBody == null) {
-                            listener.onFailure("Response body is null");
+                            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("No response body"));
                             return;
                         }
 
@@ -80,20 +82,20 @@ public class VerifyOTPHelper {
                             responseString = new String(responseBodyBytes);
                         }
 
-                        listener.onSuccess(responseString);
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onSuccess(responseString));
                     } catch (Exception e) {
-                        listener.onFailure("An error occurred: " + e.getMessage());
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("An error occurred: " + e.getMessage()));
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    listener.onFailure("An HTTP error occurred: " + e.getMessage());
+                    new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("An HTTP error occurred: " + e.getMessage()));
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "verifyOTP: ", e);
-            listener.onFailure("An error occurred: " + e.getMessage());
+            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("An error occurred: " + e.getMessage()));
         }
     }
 }

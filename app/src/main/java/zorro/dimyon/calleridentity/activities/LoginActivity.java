@@ -97,6 +97,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
             }
         });
+
+        binding.alreadyHasOTP.setOnClickListener(v -> {
+            binding.getOtpContainer.setVisibility(View.GONE);
+            binding.verifyOtpContainer.setVisibility(View.VISIBLE);
+        });
     }
 
     //    ----------------------------------------------------------------------------------------------
