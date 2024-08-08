@@ -1,15 +1,19 @@
 [versions]
 agp = "8.5.1"
+ccp = "2.5.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+libphonenumberVersion = "8.12.10"
 material = "1.12.0"
 activity = "1.9.1"
 constraintlayout = "2.1.4"
 okhttp = "4.11.0"
 
 [libraries]
+ccp = { module = "com.hbb20:ccp", version.ref = "ccp" }
+googlecode-libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version.ref = "libphonenumberVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

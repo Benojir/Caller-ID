@@ -3,64 +3,83 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.LoginFragment"
-    android:orientation="vertical"
     android:gravity="center"
-    tools:ignore="HardcodedText">
+    android:orientation="vertical"
+    tools:context=".fragments.LoginFragment">
 
     <LinearLayout
-        android:id="@+id/getOTPContainer"
+        android:id="@+id/getOtpContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/phoneNumberET"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="30dp"
-            android:hint="Enter phone number with country code. Ex: +91123456789"
-            android:importantForAutofill="no"
-            android:inputType="phone"
-            android:minHeight="48dp"
-            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+            android:paddingHorizontal="10dp">
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/ccp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:padding="8dp" />
+
+            <EditText
+                android:id="@+id/phoneEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toEndOf="@id/ccp"
+                android:hint="Enter phone number"
+                android:inputType="phone"
+                android:minHeight="48dp"
+                tools:ignore="Autofill,HardcodedText,VisualLintTextFieldSize,TextContrastCheck" />
+
+        </RelativeLayout>
 
         <Button
-            android:id="@+id/getOTPButton"
+            android:id="@+id/getOtpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxWidth="320dp"
-            android:layout_marginHorizontal="30dp"
+            android:layout_marginHorizontal="16dp"
             android:text="Get OTP"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="HardcodedText,VisualLintButtonSize" />
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/verifyOTPContainer"
+        android:id="@+id/verifyOtpContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:visibility="gone"
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/otpET"
+            android:id="@+id/otpEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="30dp"
-            android:hint="Enter OTP here"
-            android:importantForAutofill="no"
-            android:inputType="number"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="Enter OTP"
+            android:inputType="phone"
             android:minHeight="48dp"
-            tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
+            tools:ignore="Autofill,HardcodedText,VisualLintTextFieldSize,TextContrastCheck" />
 
         <Button
-            android:id="@+id/verifyOTPButton"
+            android:id="@+id/verifyOtpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="30dp"
+            android:layout_marginHorizontal="16dp"
             android:text="Verify"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="HardcodedText,VisualLintButtonSize" />
+
     </LinearLayout>
 
 </LinearLayout>

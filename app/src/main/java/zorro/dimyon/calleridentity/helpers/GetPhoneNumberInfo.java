@@ -48,7 +48,7 @@ public class GetPhoneNumberInfo {
                 .addHeader("accept", "application/json")
                 .addHeader("authorization", "Bearer " + API_KEY)
                 .addHeader("accept-encoding", "gzip")
-                .addHeader("user-agent", "Truecaller/14.16.6 (Android;14)")
+                .addHeader("user-agent", context.getString(R.string.truecaller_user_agent))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
