@@ -68,7 +68,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:hint="Enter OTP"
-            android:inputType="phone"
+            android:inputType="number"
             android:minHeight="48dp"
             tools:ignore="Autofill,HardcodedText,VisualLintTextFieldSize,TextContrastCheck" />
 

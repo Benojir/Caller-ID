@@ -4,6 +4,7 @@ import static zorro.dimyon.calleridentity.helpers.CustomMethods.isValidPhoneNumb
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class LoginFragment extends Fragment {
     private static final String TAG = "MADARA";
     private FragmentLoginBinding binding;
     private Activity activity;
-    private final String sendOtpPostApi = "https://account-asia-south1.truecaller.com/v2/sendOnboardingOtp";
+    private JSONObject data;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,7 +57,6 @@ public class LoginFragment extends Fragment {
             binding.ccp.registerCarrierNumberEditText(binding.phoneEditText);
 
             binding.getOtpButton.setOnClickListener(v -> {
-
                 int dialingCode = Integer.parseInt(binding.ccp.getSelectedCountryCode());
                 String countryNameCode = binding.ccp.getSelectedCountryNameCode();
                 String fullPhoneNumber = binding.ccp.getFullNumberWithPlus();
@@ -67,6 +68,16 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(activity, "Invalid phone number", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            binding.verifyOtpButton.setOnClickListener(v -> {
+                String otp = binding.otpEditText.getText().toString().trim();
+
+                if (CustomMethods.isValidOTP(otp)) {
+//                    verifyOtp(otp);
+                } else {
+                    Toast.makeText(activity, "Invalid OTP", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         return binding.getRoot();
@@ -76,21 +87,52 @@ public class LoginFragment extends Fragment {
 
     private void requestOtp(String justNumber, int dialingCode, String countryNameCode) {
 
-        binding.getOtpContainer.setVisibility(View.GONE);
-        binding.verifyOtpContainer.setVisibility(View.VISIBLE);
-
+        ProgressDialog pd = new ProgressDialog(activity);
+        pd.setMessage("Sending OTP...");
+        pd.setCancelable(false);
+        pd.show();
 
         SendOTPHelper sendOTPHelper = new SendOTPHelper(activity, justNumber, countryNameCode, dialingCode);
+
         sendOTPHelper.sendOTP(new SendOTPHelper.OnDataRetrievedListener() {
             @Override
             public void onSuccess(String response) {
-                Log.d(TAG, "onSuccess: " + response);
+
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+
+                    if (responseObject.has("status")) {
+                        int status = responseObject.getInt("status");
+
+                        if (status == 1) {
+                            Toast.makeText(activity, "OTP sent successfully", Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
+                            binding.getOtpContainer.setVisibility(View.GONE);
+                            binding.verifyOtpContainer.setVisibility(View.VISIBLE);
+                        } else {
+                            Toast.makeText(activity, "Failed to send OTP", Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "onSuccess: ", e);
+                    pd.dismiss();
+                    Toast.makeText(activity, "JSON parsing error", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 Log.d(TAG, "onFailure: " + errorMessage);
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
+                pd.dismiss();
             }
         });
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    private void verifyOtp(String otp, JSONObject data) {
+
     }
 }

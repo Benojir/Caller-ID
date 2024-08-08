@@ -6,7 +6,6 @@ import android.provider.Settings;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 public class CustomMethods {
@@ -19,6 +18,20 @@ public class CustomMethods {
         return nationalNumber.matches("\\d{7,13}");
     }
 
+    public static boolean isValidOTP(String otp) {
+
+        boolean isValid = false;
+
+        if (otp.length() >= 4 && otp.length() <= 10) {
+            try {
+                Integer.parseInt(otp);
+                isValid = true;
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        return isValid;
+    }
 //--------------------------------------------------------------------------------------------------
 
     @SuppressLint("HardwareIds")

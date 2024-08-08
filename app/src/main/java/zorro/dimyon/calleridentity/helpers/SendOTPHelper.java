@@ -21,10 +21,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class SendOTPHelper {
-
-    private static final String POST_URL = "https://account-asia-south1.truecaller.com/v2/sendOnboardingOtp";
-    private static final MediaType JSON = MediaType.get("application/json; charset=UTF-8");
-    private static final OkHttpClient client = new OkHttpClient();
     private final Context context;
     private final String phoneNumber;
     private final String countryCode;
@@ -74,9 +70,13 @@ public class SendOTPHelper {
             data.put("region", "region-2");
             data.put("sequenceNo", 2);
 
-            Log.d("MADARA", "sendOTP: " + data.toString());
+            Log.d("MADARA", "sendOTP: " + data);
+
+            String POST_URL = "https://account-asia-south1.truecaller.com/v2/sendOnboardingOtp";
+            MediaType JSON = MediaType.get("application/json; charset=UTF-8");
 
             RequestBody body = RequestBody.create(data.toString(), JSON);
+
             Request request = new Request.Builder()
                     .url(POST_URL)
                     .post(body)
@@ -85,6 +85,8 @@ public class SendOTPHelper {
                     .addHeader("user-agent", "Truecaller/11.75.5 (Android;10)")
                     .addHeader("clientsecret", "lvc22mp3l1sfv6ujg83rd17btt")
                     .build();
+
+            OkHttpClient client = new OkHttpClient();
 
             client.newCall(request).enqueue(new Callback() {
                 @Override
