@@ -1,0 +1,122 @@
+package zorro.dimyon.calleridentity.helpers;
+
+import android.content.Context;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+public class SendOTPHelper {
+
+    private static final String POST_URL = "https://account-asia-south1.truecaller.com/v2/sendOnboardingOtp";
+    private static final MediaType JSON = MediaType.get("application/json; charset=UTF-8");
+    private static final OkHttpClient client = new OkHttpClient();
+    private final Context context;
+    private final String phoneNumber;
+    private final String countryCode;
+    private final String dialingCode;
+
+    public interface OnDataRetrievedListener {
+        void onSuccess(String response);
+
+        void onFailure(String errorMessage);
+    }
+
+    public SendOTPHelper(Context context, String phoneNumber, String countryCode, String dialingCode) {
+        this.context = context;
+        this.phoneNumber = phoneNumber;
+        this.countryCode = countryCode;
+        this.dialingCode = dialingCode;
+    }
+
+    public void sendOTP(OnDataRetrievedListener listener) {
+
+        try {
+            JSONObject data = new JSONObject();
+            data.put("countryCode", countryCode);
+            data.put("dialingCode", dialingCode);
+
+            JSONObject installationDetails = new JSONObject();
+            JSONObject app = new JSONObject();
+            app.put("buildVersion", 5);
+            app.put("majorVersion", 11);
+            app.put("minorVersion", 7);
+            app.put("store", "GOOGLE_PLAY");
+            installationDetails.put("app", app);
+
+            JSONObject device = new JSONObject();
+            device.put("deviceId", CustomMethods.getDeviceId(context));
+            device.put("language", "en");
+            device.put("manufacturer", Build.MANUFACTURER);
+            device.put("model", Build.MODEL);
+            device.put("osName", "Android");
+//                device.put("osVersion", Build.VERSION.RELEASE);
+            device.put("osVersion", "10");
+            device.put("mobileServices", new JSONArray().put("GMS"));
+            installationDetails.put("device", device);
+            installationDetails.put("language", "en");
+
+            data.put("installationDetails", installationDetails);
+            data.put("phoneNumber", phoneNumber);
+            data.put("region", "region-2");
+            data.put("sequenceNo", 2);
+
+            RequestBody body = RequestBody.create(data.toString(), JSON);
+            Request request = new Request.Builder()
+                    .url(POST_URL)
+                    .post(body)
+                    .addHeader("content-type", "application/json; charset=UTF-8")
+                    .addHeader("accept-encoding", "gzip")
+                    .addHeader("user-agent", "Truecaller/11.75.5 (Android;10)")
+                    .addHeader("clientsecret", "lvc22mp3l1sfv6ujg83rd17btt")
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                    if (!response.isSuccessful()) {
+                        listener.onFailure("An HTTP error occurred: " + response.code());
+                        return;
+                    }
+
+                    try {
+                        ResponseBody responseBody = response.body();
+
+                        if (responseBody == null) {
+                            listener.onFailure("Response body is null");
+                            return;
+                        }
+
+                        String responseString = responseBody.string();
+                        listener.onSuccess(responseString);
+
+                    } catch (Exception e) {
+                        listener.onFailure("An error occurred: " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    listener.onFailure("An HTTP error occurred: " + e.getMessage());
+                }
+            });
+
+        } catch (Exception e) {
+            listener.onFailure("An error occurred: " + e.getMessage());
+        }
+    }
+}
