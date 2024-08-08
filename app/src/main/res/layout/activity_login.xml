@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".fragments.LoginFragment">
+    tools:context=".activities.LoginActivity">
 
     <LinearLayout
         android:id="@+id/getOtpContainer"

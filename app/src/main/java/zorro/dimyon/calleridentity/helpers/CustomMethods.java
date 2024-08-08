@@ -1,12 +1,17 @@
 package zorro.dimyon.calleridentity.helpers;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.provider.Settings;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
+
+import zorro.dimyon.calleridentity.R;
 
 public class CustomMethods {
 
@@ -55,5 +60,27 @@ public class CustomMethods {
             out.append(new String(buffer, 0, len));
         }
         return out.toString();
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    public static void errorAlert(Activity activity, String errorTitle, String errorBody, String actionButton, boolean shouldGoBack) {
+
+        if (!activity.isFinishing()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(errorTitle);
+            builder.setMessage(errorBody);
+            builder.setIcon(R.drawable.warning_24);
+            builder.setPositiveButton(actionButton, (dialogInterface, i) -> {
+                if (shouldGoBack){
+                    activity.finish();
+                }
+                else {
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 }

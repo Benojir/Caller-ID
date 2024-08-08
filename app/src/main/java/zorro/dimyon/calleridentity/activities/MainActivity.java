@@ -14,12 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
-import zorro.dimyon.calleridentity.fragments.LoginFragment;
+import zorro.dimyon.calleridentity.helpers.LoginSaver;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,16 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
         checkAndRequestPermissions();
 
-        // Create an instance of the fragment
-        LoginFragment loginFragment = new LoginFragment();
+        LoginSaver loginSaver = new LoginSaver(this);
 
-        // Get the FragmentManager and start a transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        // Add or replace the fragment in the container
-        fragmentTransaction.add(R.id.fragmentContainer, loginFragment);
-        fragmentTransaction.commit();
+        if (loginSaver.getApiKey().isEmpty()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void checkAndRequestPermissions() {

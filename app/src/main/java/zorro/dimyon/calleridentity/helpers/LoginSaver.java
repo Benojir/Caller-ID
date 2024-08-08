@@ -19,10 +19,6 @@ public class LoginSaver {
         editor.apply();
     }
 
-    public boolean isLoggedIn() {
-        return preferences.getBoolean("is_logged_in", false);
-    }
-
     public String getApiKey() {
         return preferences.getString("api_key", "");
     }
