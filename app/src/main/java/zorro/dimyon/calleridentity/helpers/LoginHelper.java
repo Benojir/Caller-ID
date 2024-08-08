@@ -106,7 +106,7 @@ public class LoginHelper {
                                 }
                             }
                         } else {
-                            listener.onComplete(false, "Failed to verify OTP");
+                            listener.onComplete(false, "Failed to verify OTP \n\n" + responseObject);
                         }
                     }
                 } catch (JSONException e) {
