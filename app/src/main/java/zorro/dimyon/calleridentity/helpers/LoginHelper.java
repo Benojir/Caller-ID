@@ -101,7 +101,7 @@ public class LoginHelper {
                                         String installationId = responseObject.getString("installationId");
                                         listener.onComplete(true, installationId);
                                     } else {
-                                        listener.onComplete(false, "Installation ID not found");
+                                        listener.onComplete(false, "Installation ID not found.\n\n" + responseObject);
                                     }
                                 }
                             }
@@ -109,6 +109,37 @@ public class LoginHelper {
                             listener.onComplete(false, "Invalid OTP");
                         } else if (status == 7) {
                             listener.onComplete(false, "Retries limit exceeded");
+
+                        } else if (status == 17) {
+
+                            verifyOTPHelper.completeOnboarding(data, new VerifyOTPHelper.OnDataRetrievedListener() {
+                                @Override
+                                public void onSuccess(String response) {
+
+                                    try {
+
+                                        JSONObject responseObject = new JSONObject(response);
+
+                                        if (responseObject.has("installationId")) {
+                                            String installationId = responseObject.getString("installationId");
+                                            listener.onComplete(true, installationId);
+                                        } else {
+                                            listener.onComplete(false, "Installation Id not found. Failed completing signup.\n\n" + responseObject);
+                                        }
+
+                                    } catch (JSONException e) {
+                                        Log.e(TAG, "onSuccess: ", e);
+                                        listener.onComplete(false, e.getMessage());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(String errorMessage) {
+                                    Log.d(TAG, "Verify OTP onFailure: " + errorMessage);
+                                    listener.onComplete(false, errorMessage);
+                                }
+                            });
+                            
                         } else {
                             listener.onComplete(false, "Failed to verify OTP \n\n" + responseObject);
                         }
@@ -126,4 +157,6 @@ public class LoginHelper {
             }
         });
     }
+
+//    ----------------------------------------------------------------------------------------------
 }
