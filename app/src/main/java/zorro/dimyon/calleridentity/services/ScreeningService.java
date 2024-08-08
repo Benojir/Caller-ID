@@ -50,7 +50,7 @@ public class ScreeningService extends CallScreeningService {
                 }
             }
 
-            if (ContactsHelper.getContactNameByPhoneNumber(this, number).isEmpty()){
+            if (ContactsHelper.getContactNameByPhoneNumber(this, number).isEmpty()) {
 
                 LoginSaver loginSaver = new LoginSaver(this);
                 String countryNameCode = loginSaver.getCountryNameCode();
