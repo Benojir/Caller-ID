@@ -37,28 +37,24 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (checkAndRequestPermissions()) {
+        checkAndRequestPermissions();
 
-            LoginSaver loginSaver = new LoginSaver(this);
+        LoginSaver loginSaver = new LoginSaver(this);
 
-            if (loginSaver.getApiKey().isEmpty()) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
+        if (loginSaver.getApiKey().isEmpty()) {
+            //change ui here
+//            Intent intent = new Intent(this, LoginActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//            finish();
         }
-
-
     }
 
-    private boolean checkAndRequestPermissions() {
+    private void checkAndRequestPermissions() {
         if (areAllPermissionsGranted()) {
             requestRole();
-            return true;
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
-            return false;
         }
     }
 
@@ -119,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (areAllPermissionsGranted()) {
                 requestRole();
-                startNextActivity();
             } else {
                 showToastAndFinish("All permissions are required.");
             }
@@ -129,9 +124,5 @@ public class MainActivity extends AppCompatActivity {
     private void showToastAndFinish(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         new Handler().postDelayed(this::finish, 2000);
-    }
-
-    private void startNextActivity() {
-        // Add your logic to start the next activity here
     }
 }
