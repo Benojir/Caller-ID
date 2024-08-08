@@ -38,7 +38,7 @@ public class LoginHelper {
                     if (responseObject.has("status")) {
                         int status = responseObject.getInt("status");
 
-                        if (status == 1) {
+                        if (status == 1 || status == 9) {
 
                             String requestId = responseObject.getString("requestId");
 
@@ -51,7 +51,7 @@ public class LoginHelper {
                             listener.onSuccess(data);
                         } else {
 
-                            if (status == 5) {
+                            if (status == 5 || status == 6) {
                                 listener.onFailure("Too many request attempted. Try again after 1 hour later.");
                                 return;
                             }
@@ -105,6 +105,10 @@ public class LoginHelper {
                                     }
                                 }
                             }
+                        } else if (status == 11 || status == 40101) {
+                            listener.onComplete(false, "Invalid OTP");
+                        } else if (status == 7) {
+                            listener.onComplete(false, "Retries limit exceeded");
                         } else {
                             listener.onComplete(false, "Failed to verify OTP \n\n" + responseObject);
                         }
