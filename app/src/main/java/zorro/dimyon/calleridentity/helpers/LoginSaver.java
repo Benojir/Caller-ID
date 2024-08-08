@@ -23,6 +23,8 @@ public class LoginSaver {
         return preferences.getString("api_key", "");
     }
 
+//    ----------------------------------------------------------------------------------------------
+
     public void saveCountryNameCode(String countryNameCode) {
         editor.putString("country_name_code", countryNameCode);
         editor.apply();
@@ -30,5 +32,38 @@ public class LoginSaver {
 
     public String getCountryNameCode() {
         return preferences.getString("country_name_code", "IN");
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    public void saveNumber(String number) {
+        editor.putString("number", number);
+        editor.apply();
+    }
+
+    public String getNumber() {
+        return preferences.getString("number", "");
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    public void saveDialingCode(int dialingCode) {
+        editor.putInt("dialing_code", dialingCode);
+        editor.apply();
+    }
+
+    public int getDialingCode() {
+        return preferences.getInt("dialing_code", 91);
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    public void saveOTPRequestId(String requestId) {
+        editor.putString("otp_request_id", requestId);
+        editor.apply();
+    }
+
+    public String getOTPRequestId() {
+        return preferences.getString("otp_request_id", "");
     }
 }

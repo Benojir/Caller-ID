@@ -16,16 +16,14 @@ import org.json.JSONObject;
 
 import zorro.dimyon.calleridentity.databinding.ActivityLoginBinding;
 import zorro.dimyon.calleridentity.helpers.CustomMethods;
+import zorro.dimyon.calleridentity.helpers.LoginHelper;
 import zorro.dimyon.calleridentity.helpers.LoginSaver;
-import zorro.dimyon.calleridentity.helpers.SendOTPHelper;
-import zorro.dimyon.calleridentity.helpers.VerifyOTPHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private LoginSaver loginSaver;
     private final String TAG = "MADARA";
-    private final JSONObject data = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +32,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         loginSaver = new LoginSaver(this);
+
+        if (loginSaver.getOTPRequestId().isEmpty()) {
+            binding.alreadyHaveOTPBtn.setVisibility(View.GONE);
+        }
 
         binding.ccp.registerCarrierNumberEditText(binding.phoneEditText);
 
@@ -50,12 +52,20 @@ public class LoginActivity extends AppCompatActivity {
                 pd.setCancelable(false);
                 pd.show();
 
-                requestOtp(justNumber, dialingCode, countryNameCode, new OnOTPSentListener() {
+                LoginHelper loginHelper = new LoginHelper(this);
+
+                loginHelper.requestOtp(justNumber, dialingCode, countryNameCode, new LoginHelper.OnOTPSentListener() {
                     @Override
                     public void onSuccess(JSONObject data) {
                         pd.dismiss();
                         binding.getOtpContainer.setVisibility(View.GONE);
                         binding.verifyOtpContainer.setVisibility(View.VISIBLE);
+
+                        String requestId = data.optString("requestId");
+                        loginSaver.saveOTPRequestId(requestId);
+                        loginSaver.saveNumber(justNumber);
+                        loginSaver.saveDialingCode(dialingCode);
+                        loginSaver.saveCountryNameCode(countryNameCode);
                     }
 
                     @Override
@@ -80,138 +90,47 @@ public class LoginActivity extends AppCompatActivity {
                 pd.setCancelable(false);
                 pd.show();
 
-                verifyOtp(data, (isVerified, message) -> {
-                    pd.dismiss();
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("token", otp);
+                    data.put("requestId", loginSaver.getOTPRequestId());
+                    data.put("phoneNumber", loginSaver.getNumber());
+                    data.put("dialingCode", loginSaver.getDialingCode());
+                    data.put("countryCode", loginSaver.getCountryNameCode());
 
-                    if (isVerified) {
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-                        CustomMethods.errorAlert(this, "Error", message, "OK", false);
-                    }
-                });
+                    LoginHelper loginHelper = new LoginHelper(this);
+
+                    loginHelper.verifyOtp(data, (isVerified, message) -> {
+                        pd.dismiss();
+
+                        if (isVerified) {
+                            loginSaver.saveLogin(message);
+
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                            CustomMethods.errorAlert(this, "Error", message, "OK", false);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "onCreate: ", e);
+                    pd.dismiss();
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    CustomMethods.errorAlert(this, "Error", e.getMessage(), "OK", false);
+                }
             } else {
                 Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
             }
         });
 
-        binding.alreadyHasOTP.setOnClickListener(v -> {
+        binding.alreadyHaveOTPBtn.setOnClickListener(v -> {
             binding.getOtpContainer.setVisibility(View.GONE);
             binding.verifyOtpContainer.setVisibility(View.VISIBLE);
         });
     }
 
-    //    ----------------------------------------------------------------------------------------------
-
-    private void requestOtp(String justNumber, int dialingCode, String countryNameCode, OnOTPSentListener listener) {
-
-        SendOTPHelper sendOTPHelper = new SendOTPHelper(this, justNumber, countryNameCode, dialingCode);
-
-        sendOTPHelper.sendOTP(new SendOTPHelper.OnDataRetrievedListener() {
-            @Override
-            public void onSuccess(String response) {
-
-                try {
-                    JSONObject responseObject = new JSONObject(response);
-
-                    if (responseObject.has("status")) {
-                        int status = responseObject.getInt("status");
-
-                        if (status == 1) {
-                            binding.getOtpContainer.setVisibility(View.GONE);
-                            binding.verifyOtpContainer.setVisibility(View.VISIBLE);
-
-                            String requestId = responseObject.getString("requestId");
-
-                            data.put("countryCode", countryNameCode);
-                            data.put("dialingCode", dialingCode);
-                            data.put("phoneNumber", justNumber);
-                            data.put("requestId", requestId);
-
-                            loginSaver.saveCountryNameCode(countryNameCode);
-
-                            listener.onSuccess(data);
-                        } else {
-                            listener.onFailure("Failed to send OTP");
-                        }
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Send OTP onSuccess: ", e);
-                    listener.onFailure(e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                Log.d(TAG, "Send OTP onFailure: " + errorMessage);
-                listener.onFailure("Try again 1 hour later.");
-            }
-        });
-    }
-
-//    ----------------------------------------------------------------------------------------------
-
-    private void verifyOtp(JSONObject data, OnOTPVerifiedListener listener) {
-
-        VerifyOTPHelper verifyOTPHelper = new VerifyOTPHelper(data);
-
-        verifyOTPHelper.verifyOTP(new VerifyOTPHelper.OnDataRetrievedListener() {
-            @Override
-            public void onSuccess(String response) {
-
-                try {
-                    JSONObject responseObject = new JSONObject(response);
-
-                    if (responseObject.has("status")) {
-                        int status = responseObject.getInt("status");
-
-                        if (status == 2) {
-
-                            if (responseObject.has("suspended")) {
-                                boolean suspended = responseObject.getBoolean("suspended");
-
-                                if (suspended) {
-                                    listener.onComplete(false, "Your account has been suspended!");
-                                } else {
-                                    if (responseObject.has("installationId")) {
-                                        String installationId = responseObject.getString("installationId");
-
-                                        loginSaver.saveLogin(installationId);
-                                        listener.onComplete(true, "OTP verified");
-                                    } else {
-                                        listener.onComplete(false, "Installation ID not found");
-                                    }
-                                }
-                            }
-                        } else {
-                            listener.onComplete(false, "Failed to verify OTP");
-                        }
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Verify OTP onSuccess: ", e);
-                    listener.onComplete(false, e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                Log.d(TAG, "Verify OTP onFailure: " + errorMessage);
-                listener.onComplete(false, errorMessage);
-            }
-        });
-    }
-
-//    ----------------------------------------------------------------------------------------------
-
-    public interface OnOTPSentListener {
-        void onSuccess(JSONObject data);
-        void onFailure(String errorMessage);
-    }
-
-    public interface OnOTPVerifiedListener {
-        void onComplete(boolean isVerified, String message);
-    }
 }

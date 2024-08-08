@@ -56,8 +56,18 @@ public class VerifyOTPHelper {
                     if (!response.isSuccessful()) {
                         try {
                             ResponseBody responseBody = response.body();
-                            String errorBody = responseBody != null ? responseBody.string() : "No error body";
-                            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("HTTP error: " + response.code() + " - " + errorBody));
+                            byte[] responseBodyBytes = responseBody != null ? responseBody.bytes() : null;
+
+                            String errorBody;
+
+                            if (responseBodyBytes != null && CustomMethods.isGzipEncoded(responseBodyBytes)) {
+                                errorBody = CustomMethods.decompressGzip(responseBodyBytes);
+                            } else {
+                                errorBody = new String(responseBodyBytes);
+                            }
+                            String finalErrorBody = errorBody;
+
+                            new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("HTTP error: " + response.code() + " - " + finalErrorBody));
                         } catch (Exception e) {
                             new Handler(Looper.getMainLooper()).post(() -> listener.onFailure("An error occurred: " + e.getMessage()));
                         }
