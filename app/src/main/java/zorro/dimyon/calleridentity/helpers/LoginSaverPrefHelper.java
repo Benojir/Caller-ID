@@ -3,17 +3,17 @@ package zorro.dimyon.calleridentity.helpers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class LoginSaver {
+public class LoginSaverPrefHelper {
 
     private final SharedPreferences preferences;
     private final SharedPreferences.Editor editor;
 
-    public LoginSaver(Context context) {
+    public LoginSaverPrefHelper(Context context) {
         preferences = context.getSharedPreferences("login_data", Context.MODE_PRIVATE);
         editor = preferences.edit();
     }
 
-    public void saveLogin(String apiKey) {
+    public void saveApiKey(String apiKey) {
         editor.putString("api_key", apiKey);
         editor.putBoolean("is_logged_in", true);
         editor.apply();

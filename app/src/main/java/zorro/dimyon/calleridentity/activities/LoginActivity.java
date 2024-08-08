@@ -17,12 +17,12 @@ import org.json.JSONObject;
 import zorro.dimyon.calleridentity.databinding.ActivityLoginBinding;
 import zorro.dimyon.calleridentity.helpers.CustomMethods;
 import zorro.dimyon.calleridentity.helpers.LoginHelper;
-import zorro.dimyon.calleridentity.helpers.LoginSaver;
+import zorro.dimyon.calleridentity.helpers.LoginSaverPrefHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
-    private LoginSaver loginSaver;
+    private LoginSaverPrefHelper loginSaverPrefHelper;
     private final String TAG = "MADARA";
 
     @Override
@@ -31,9 +31,9 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        loginSaver = new LoginSaver(this);
+        loginSaverPrefHelper = new LoginSaverPrefHelper(this);
 
-        if (loginSaver.getOTPRequestId().isEmpty()) {
+        if (loginSaverPrefHelper.getOTPRequestId().isEmpty()) {
             binding.alreadyHaveOTPBtn.setVisibility(View.GONE);
         }
 
@@ -62,10 +62,10 @@ public class LoginActivity extends AppCompatActivity {
                         binding.verifyOtpContainer.setVisibility(View.VISIBLE);
 
                         String requestId = data.optString("requestId");
-                        loginSaver.saveOTPRequestId(requestId);
-                        loginSaver.saveNumber(justNumber);
-                        loginSaver.saveDialingCode(dialingCode);
-                        loginSaver.saveCountryNameCode(countryNameCode);
+                        loginSaverPrefHelper.saveOTPRequestId(requestId);
+                        loginSaverPrefHelper.saveNumber(justNumber);
+                        loginSaverPrefHelper.saveDialingCode(dialingCode);
+                        loginSaverPrefHelper.saveCountryNameCode(countryNameCode);
                     }
 
                     @Override
@@ -93,10 +93,10 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject data = new JSONObject();
                 try {
                     data.put("token", otp);
-                    data.put("requestId", loginSaver.getOTPRequestId());
-                    data.put("phoneNumber", loginSaver.getNumber());
-                    data.put("dialingCode", loginSaver.getDialingCode());
-                    data.put("countryCode", loginSaver.getCountryNameCode());
+                    data.put("requestId", loginSaverPrefHelper.getOTPRequestId());
+                    data.put("phoneNumber", loginSaverPrefHelper.getNumber());
+                    data.put("dialingCode", loginSaverPrefHelper.getDialingCode());
+                    data.put("countryCode", loginSaverPrefHelper.getCountryNameCode());
 
                     LoginHelper loginHelper = new LoginHelper(this);
 
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         pd.dismiss();
 
                         if (isVerified) {
-                            loginSaver.saveLogin(message);
+                            loginSaverPrefHelper.saveApiKey(message);
 
                             Intent intent = new Intent(this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

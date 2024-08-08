@@ -17,7 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
-import zorro.dimyon.calleridentity.helpers.LoginSaver;
+import zorro.dimyon.calleridentity.helpers.LoginSaverPrefHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         checkAndRequestPermissions();
 
-        LoginSaver loginSaver = new LoginSaver(this);
+        LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(this);
 
-        if (loginSaver.getApiKey().isEmpty()) {
+        if (loginSaverPrefHelper.getApiKey().isEmpty()) {
             binding.loginWithOtpBtn.setVisibility(View.VISIBLE);
 
             binding.loginWithOtpBtn.setOnClickListener(v -> {
