@@ -50,7 +50,13 @@ public class LoginHelper {
 
                             listener.onSuccess(data);
                         } else {
-                            listener.onFailure("Failed to send OTP");
+
+                            if (status == 5) {
+                                listener.onFailure("Too many request attempted. Try again after 1 hour later.");
+                                return;
+                            }
+
+                            listener.onFailure(responseObject.toString());
                         }
                     }
                 } catch (JSONException e) {
