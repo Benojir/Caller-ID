@@ -33,10 +33,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginSaverPrefHelper = new LoginSaverPrefHelper(this);
 
-        if (loginSaverPrefHelper.getOTPRequestId().isEmpty()) {
-            binding.alreadyHaveOTPBtn.setVisibility(View.GONE);
-        }
-
         binding.ccp.registerCarrierNumberEditText(binding.phoneEditText);
 
         binding.getOtpButton.setOnClickListener(v -> {
@@ -126,11 +122,5 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
             }
         });
-
-        binding.alreadyHaveOTPBtn.setOnClickListener(v -> {
-            binding.getOtpContainer.setVisibility(View.GONE);
-            binding.verifyOtpContainer.setVisibility(View.VISIBLE);
-        });
     }
-
 }
