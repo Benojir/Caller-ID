@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".activities.LoginActivity">
 
     <LinearLayout
@@ -17,24 +19,27 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp">
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/background_input_number_container">
 
             <com.hbb20.CountryCodePicker
                 android:id="@+id/ccp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:padding="8dp" />
+                app:ccpDialog_textColor="?attr/textColor"
+                app:ccp_arrowColor="?attr/textColor"
+                app:ccp_contentColor="?attr/textColor"
+                android:padding="5dp"/>
 
             <EditText
                 android:id="@+id/phoneEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:background="@null"
                 android:layout_toEndOf="@id/ccp"
                 android:hint="Enter phone number"
                 android:inputType="phone"
@@ -47,8 +52,10 @@
             android:id="@+id/getOtpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="50dp"
             android:layout_marginHorizontal="16dp"
             android:text="Get OTP"
+            android:layout_marginTop="15dp"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
 
     </LinearLayout>
@@ -65,8 +72,10 @@
             android:id="@+id/otpEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:paddingHorizontal="15dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/background_input_number_container"
             android:hint="Enter OTP"
             android:inputType="number"
             android:minHeight="48dp"
@@ -76,7 +85,9 @@
             android:id="@+id/verifyOtpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="50dp"
             android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="15dp"
             android:text="Verify"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
 
