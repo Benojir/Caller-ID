@@ -20,7 +20,6 @@ public class CallsControlHelper {
     private final String phoneNumber;
     private final CallScreeningService.CallResponse.Builder response;
     private final String countryNameCode;
-    private final String apiKey;
 
     public interface OnDataReceivedListener {
         void onReceived(JSONObject callerInfo);
@@ -36,7 +35,6 @@ public class CallsControlHelper {
 
         LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(context);
         countryNameCode = loginSaverPrefHelper.getCountryNameCode();
-        apiKey = loginSaverPrefHelper.getApiKey();
     }
 
 //    ----------------------------------------------------------------------------------------------
@@ -44,7 +42,7 @@ public class CallsControlHelper {
     public void blockAllSpamCalls() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (callDetails.getCallerNumberVerificationStatus() == Connection.VERIFICATION_STATUS_FAILED){
+            if (callDetails.getCallerNumberVerificationStatus() == Connection.VERIFICATION_STATUS_FAILED) {
                 response.setDisallowCall(true);
                 response.setRejectCall(true);
                 callScreeningService.respondToCall(callDetails, response.build());
@@ -105,71 +103,68 @@ public class CallsControlHelper {
 
     public void getCallerInfo(OnDataReceivedListener listener) {
 
-        if (!apiKey.isEmpty()) {
+        GetPhoneNumberInfo getPhoneNumberInfo = new GetPhoneNumberInfo(context, phoneNumber, countryNameCode);
 
-            GetPhoneNumberInfo getPhoneNumberInfo = new GetPhoneNumberInfo(context, phoneNumber, countryNameCode);
+        getPhoneNumberInfo.getNumberInfo((isSuccessful, message, numberInfo) -> {
 
-            getPhoneNumberInfo.getNumberInfo((isSuccessful, message, numberInfo) -> {
+            if (isSuccessful) {
+                try {
+                    JSONObject callerInfo = new JSONObject();
 
-                if (isSuccessful) {
-                    try {
-                        JSONObject callerInfo = new JSONObject();
+                    JSONArray data = numberInfo.getJSONArray("data");
+                    JSONObject firstData = data.getJSONObject(0);
 
-                        JSONArray data = numberInfo.getJSONArray("data");
-                        JSONObject firstData = data.getJSONObject(0);
-
-                        if (firstData.has("name")){
-                            String callerName = firstData.getString("name");
-                            callerInfo.put("callerName", callerName);
-                        } else {
-                            callerInfo.put("callerName", phoneNumber);
-                        }
-
-                        if (firstData.has("image")) {
-                            String callerProfileImageLink = firstData.getString("image");
-                            callerInfo.put("callerProfileImageLink", callerProfileImageLink);
-                        }
-
-                        if (firstData.has("addresses")) {
-                            JSONArray addresses = firstData.getJSONArray("addresses");
-                            if (addresses.length() > 0) {
-                                if (addresses.getJSONObject(0).has("city")){
-                                    String address = addresses.getJSONObject(0).getString("city");
-                                    if (addresses.getJSONObject(0).has("countryCode")){
-                                        String  countryCode = addresses.getJSONObject(0).getString("countryCode");
-                                        String countryName = CustomMethods.getCountryNameByCode(countryCode);
-                                        address += ", " + countryName;
-                                    }
-                                    callerInfo.put("address", address);
-                                }
-                            }
-                        }
-
-                        if (firstData.has("spamInfo")) {
-
-                            callerInfo.put("isSpamCall", true);
-
-                            JSONObject spamInfo = firstData.getJSONObject("spamInfo");
-                            if (spamInfo.has("spamScore")){
-                                int spamScore = spamInfo.getInt("spamScore");
-                                callerInfo.put("spamScore", spamScore);
-                            }
-                            if (spamInfo.has("spamType")){
-                                String spamType = spamInfo.getString("spamType");
-                                callerInfo.put("spamType", spamType);
-                            }
-                        }
-
-                        listener.onReceived(callerInfo);
-
-                    } catch (JSONException e) {
-                        Log.e(TAG, "blockAllSpamCalls: ", e);
-                        listener.onReceived(null);
+                    if (firstData.has("name")) {
+                        String callerName = firstData.getString("name");
+                        callerInfo.put("callerName", callerName);
+                    } else {
+                        callerInfo.put("callerName", phoneNumber);
                     }
-                } else {
+
+                    if (firstData.has("image")) {
+                        String callerProfileImageLink = firstData.getString("image");
+                        callerInfo.put("callerProfileImageLink", callerProfileImageLink);
+                    }
+
+                    if (firstData.has("addresses")) {
+                        JSONArray addresses = firstData.getJSONArray("addresses");
+                        if (addresses.length() > 0) {
+                            if (addresses.getJSONObject(0).has("city")) {
+                                String address = addresses.getJSONObject(0).getString("city");
+                                if (addresses.getJSONObject(0).has("countryCode")) {
+                                    String countryCode = addresses.getJSONObject(0).getString("countryCode");
+                                    String countryName = CustomMethods.getCountryNameByCode(countryCode);
+                                    address += ", " + countryName;
+                                }
+                                callerInfo.put("address", address);
+                            }
+                        }
+                    }
+
+                    if (firstData.has("spamInfo")) {
+
+                        callerInfo.put("isSpamCall", true);
+
+                        JSONObject spamInfo = firstData.getJSONObject("spamInfo");
+                        if (spamInfo.has("spamScore")) {
+                            int spamScore = spamInfo.getInt("spamScore");
+                            callerInfo.put("spamScore", spamScore);
+                        }
+                        if (spamInfo.has("spamType")) {
+                            String spamType = spamInfo.getString("spamType");
+                            callerInfo.put("spamType", spamType);
+                        }
+                    }
+
+                    listener.onReceived(callerInfo);
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "blockAllSpamCalls: ", e);
                     listener.onReceived(null);
                 }
-            });
-        }
+            } else {
+                listener.onReceived(null);
+            }
+        });
     }
 }
