@@ -7,7 +7,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,15 +29,16 @@ public class GetPhoneNumberInfo {
     private final String apiKey;
 
     public interface OnFetchedInfoListener {
-        void onSuccess(JSONObject numberInfo);
-        void onError(String errorMessage);
+        void onReceivedResponse(boolean isSuccessful, String message, JSONObject numberInfo);
     }
 
-    public GetPhoneNumberInfo(Context context, String phoneNumber, String countryNameCode, String apiKey) {
+    public GetPhoneNumberInfo(Context context, String phoneNumber, String countryNameCode) {
         this.context = context;
         this.phoneNumber = phoneNumber;
         this.countryNameCode = countryNameCode;
-        this.apiKey = apiKey;
+
+        LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(context);
+        this.apiKey = loginSaverPrefHelper.getApiKey();
     }
 
     public void getNumberInfo(OnFetchedInfoListener listener) {
@@ -57,72 +57,41 @@ public class GetPhoneNumberInfo {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "onFailure: ", e);
                 // Handle failure
-                new Handler(Looper.getMainLooper()).post(() -> listener.onError("Request failed"));
+                new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, e.getMessage(), null));
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "onResponse: " + response.code());
-                    new Handler(Looper.getMainLooper()).post(() -> listener.onError("Response not successful"));
+                    new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Response code: " + response.code(), null));
+                    return;
                 }
 
                 ResponseBody responseBody = response.body();
+
                 if (responseBody != null) {
                     // Check if the response is gzip encoded
                     byte[] responseBodyBytes = responseBody.bytes();
+
                     String responseString;
+
                     if (CustomMethods.isGzipEncoded(responseBodyBytes)) {
                         responseString = CustomMethods.decompressGzip(responseBodyBytes);
                     } else {
                         responseString = new String(responseBodyBytes);
                     }
-                    Log.d(TAG, "onResponse: " + responseString);
 
                     try {
-                        JSONObject numberData = new JSONObject(responseString);
-                        JSONObject data = numberData.getJSONArray("data").getJSONObject(0);
-
-                        String callerName = phoneNumber;
-                        String address = "Unknown";
-                        boolean isSpamCall = false;
-                        String spamType = "";
-
-                        if (data.has("name")) {
-                            callerName = data.getString("name");
-                        }
-
-                        if (data.has("addresses")) {
-                            JSONArray addresses = data.getJSONArray("addresses");
-                            if (addresses.length() > 0) {
-                                if (addresses.getJSONObject(0).has("city")){
-                                    address = addresses.getJSONObject(0).getString("city");
-                                }
-                            }
-                        }
-
-                        if (data.has("spamInfo")) {
-                            isSpamCall = true;
-                            if (data.getJSONObject("spamInfo").has("spamType")){
-                                spamType = data.getJSONObject("spamInfo").getString("spamType");
-                            }
-                        }
-
-                        JSONObject numberInfo = new JSONObject();
-                        numberInfo.put("callerName", callerName);
-                        numberInfo.put("address", address);
-                        numberInfo.put("isSpamCall", isSpamCall);
-                        numberInfo.put("spamType", spamType);
-
-                        new Handler(Looper.getMainLooper()).post(() -> listener.onSuccess(numberInfo));
-
+                        JSONObject numberInfo = new JSONObject(responseString);
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(true, "Success", numberInfo));
                     } catch (JSONException e) {
+                        listener.onReceivedResponse(false, responseString, null);
                         Log.e(TAG, "onResponse: ", e);
-                        listener.onError("JSON parsing error");
                     }
                 }
             }
         });
     }
-
 }

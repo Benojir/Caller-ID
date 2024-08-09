@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 import zorro.dimyon.calleridentity.R;
@@ -82,5 +83,12 @@ public class CustomMethods {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    public static String getCountryNameByCode(String countryCode) {
+        Locale locale = new Locale("", countryCode);
+        return locale.getDisplayCountry();
     }
 }

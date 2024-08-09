@@ -6,32 +6,32 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.widget.Toast;
+import android.telephony.PhoneNumberUtils;
 
 import androidx.core.content.ContextCompat;
 
-public class ContactsHelper {
+public class ContactUtils {
 
     public static String getContactNameByPhoneNumber(Context context, String phoneNumber) {
-
         String contactName = "";
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
 
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
 
             Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
             if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    contactName = cursor.getString(0);
+                while (cursor.moveToNext()) {
+                    String storedNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    if (PhoneNumberUtils.compare(storedNumber, phoneNumber)) {
+                        contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                        break;
+                    }
                 }
                 cursor.close();
             }
-        } else {
-            Toast.makeText(context, "Please grant contacts permission", Toast.LENGTH_SHORT).show();
         }
 
         return contactName;
