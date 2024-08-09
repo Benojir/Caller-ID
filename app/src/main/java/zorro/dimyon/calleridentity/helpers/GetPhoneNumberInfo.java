@@ -43,6 +43,11 @@ public class GetPhoneNumberInfo {
 
     public void getNumberInfo(OnFetchedInfoListener listener) {
 
+        if (apiKey.isEmpty() || !CustomMethods.isInternetAvailable(context)) {
+            listener.onReceivedResponse(false, "API key is empty or internet is not available", null);
+            return;
+        }
+
         Request request = new Request.Builder()
                 .url("https://search5-noneu.truecaller.com/v2/search?q=" + phoneNumber + "&countryCode=" + countryNameCode + "&type=4&locAddr=&encoding=json")
                 .addHeader("accept", "application/json")

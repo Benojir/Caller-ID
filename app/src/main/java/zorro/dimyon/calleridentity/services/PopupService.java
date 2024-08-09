@@ -13,9 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
+
+import com.bumptech.glide.Glide;
 
 import zorro.dimyon.calleridentity.BuildConfig;
 import zorro.dimyon.calleridentity.R;
@@ -38,17 +41,27 @@ public class PopupService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        String callerName = intent.getStringExtra("caller_name");
-        String phoneNumber = intent.getStringExtra("phone_number");
+        String callerName = intent.getStringExtra("callerName");
+        String phoneNumber = intent.getStringExtra("phoneNumber");
+        String callerProfileImageLink = intent.getStringExtra("callerProfileImageLink");
         String address = intent.getStringExtra("address");
+        boolean isSpamCall = intent.getBooleanExtra("isSpamCall", false);
+        String spamType = intent.getStringExtra("spamType");
+
+        if (callerProfileImageLink == null) {
+            callerProfileImageLink = "";
+        }
+
+        if (spamType != null && isSpamCall && !spamType.isEmpty()) {
+            address = address + " (" + spamType + ")";
+        }
 
         startForeground(NOTIFICATION_ID, createNotification(callerName, phoneNumber));
-
-        showPopup(callerName, address);
+        showPopup(callerName, address, isSpamCall, callerProfileImageLink);
         return START_NOT_STICKY;
     }
 
-    private void showPopup(String phoneNumber, String address) {
+    private void showPopup(String callerName, String address, boolean isSpamCall, String profileImageLink) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -66,10 +79,30 @@ public class PopupService extends Service {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         popupView = inflater.inflate(R.layout.floating_caller_info, tempRoot, false);
 
+        SwipeDismissLayout floatingCallerInfoMainLayout = popupView.findViewById(R.id.floatingCallerInfoMainLayout);
         TextView callerNameTV = popupView.findViewById(R.id.callerNameTV);
         TextView callerAddressTV = popupView.findViewById(R.id.callerAddressTV);
-        callerNameTV.setText(phoneNumber);
+        ImageView callerProfileIV = popupView.findViewById(R.id.imageView);
+
+        callerNameTV.setText(callerName);
         callerAddressTV.setText(address);
+
+
+        if (!profileImageLink.isEmpty()) {
+            Glide.with(this)
+                    .load(profileImageLink)
+                    .placeholder(R.drawable.verified_user_24)
+                    .error(R.drawable.verified_user_24)
+                    .into(callerProfileIV);
+        } else {
+            if (isSpamCall) {
+                callerProfileIV.setImageResource(R.drawable.warning_24);
+            }
+        }
+
+        if (isSpamCall) {
+            floatingCallerInfoMainLayout.setBackgroundColor(getColor(R.color.red));
+        }
 
         SwipeDismissLayout swipeLayout = (SwipeDismissLayout) popupView;
         swipeLayout.setOnDismissListener(() -> {

@@ -3,6 +3,8 @@ package zorro.dimyon.calleridentity.helpers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
@@ -85,6 +87,23 @@ public class CustomMethods {
         }
     }
 
+//    ----------------------------------------------------------------------------------------------
+
+    public static boolean isInternetAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+
+            if (capabilities != null) {
+                return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+            }
+        }
+
+        return false;
+    }
 //    ----------------------------------------------------------------------------------------------
 
     public static String getCountryNameByCode(String countryCode) {

@@ -46,6 +46,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    implementation (libs.glide)
     implementation(libs.okhttp)
     implementation (libs.googlecode.libphonenumber)
     implementation (libs.ccp)

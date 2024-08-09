@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.1"
 ccp = "2.5.1"
+glide = "4.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -14,6 +15,7 @@ preference = "1.2.1"
 
 [libraries]
 ccp = { module = "com.hbb20:ccp", version.ref = "ccp" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 googlecode-libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version.ref = "libphonenumberVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

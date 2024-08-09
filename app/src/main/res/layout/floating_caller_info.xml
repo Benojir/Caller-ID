@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/background_floating_caller_info"
     tools:ignore="HardcodedText"
+    android:id="@+id/floatingCallerInfoMainLayout"
     android:padding="15dp">
 
     <FrameLayout
