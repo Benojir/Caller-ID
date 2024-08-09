@@ -20,4 +20,27 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="general_header">General</string>
+    <string name="block_all_spammers_summary_off">Not all spam calls will be blocked</string>
+    <string name="block_all_spammers_summary_on">All spam calls are blocked</string>
+    <string name="block_all_spammers_title">Block all scam calls</string>
+    <string name="block_top_spammers_title">Block high risk spam calls</string>
+    <string name="block_top_spammers_summary_on">Top spam calls are blocked</string>
+    <string name="spam_calls_header">Scam Calls</string>
+    <string name="incoming_calls_header">Incoming Calls</string>
+    <string name="floating_dialog_header">Floating Dialog</string>
+    <string name="block_top_spammers_summary_off">Block top spam calls</string>
+    <string name="floating_window_incoming_title">Popup notification (Incoming calls)</string>
+    <string name="floating_window_incoming_summary_on">Popup notification will be shown for all incoming calls.</string>
+    <string name="floating_window_incoming_summary_off">Popup notification will only appear for incoming calls from unknown numbers not saved in contacts.</string>
+    <string name="floating_window_outgoing_title">Popup notification (Outgoing calls)</string>
+    <string name="floating_window_outgoing_summary_on">A popup notification will appear for outgoing calls to numbers not saved in contacts.</string>
+    <string name="floating_window_outgoing_summary_off">No popup notification will appear for outgoing calls.</string>
+    <string name="floating_window_header">Floating Window</string>
+    <string name="reject_all_incoming_calls_summary_on">All incoming calls will be rejected. Even form your contacts.</string>
+    <string name="reject_all_incoming_calls_summary_off">All incoming calls are allowed.</string>
+    <string name="reject_all_incoming_calls_title">Reject all incoming calls</string>
+    <string name="reject_unknown_incoming_calls_summary_on">All unknown incoming calls will be rejected.</string>
+    <string name="reject_unknown_incoming_calls_summary_off">All calls are allowed.</string>
+    <string name="reject_unknown_incoming_calls_title">Reject unknown calls</string>
 </resources>
