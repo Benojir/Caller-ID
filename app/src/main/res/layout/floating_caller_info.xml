@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_floating_caller_info"
+    android:background="@drawable/background_normal_floating_caller_info"
     tools:ignore="HardcodedText"
     android:id="@+id/floatingCallerInfoMainLayout"
     android:padding="15dp">
@@ -47,7 +47,7 @@
             android:textStyle="bold"
             android:shadowColor="@color/black"
             android:textAlignment="textStart"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:maxLines="2" />
 
         <TextView
@@ -58,6 +58,7 @@
             android:text="Ahmedabad, India"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:ignore="TextContrastCheck" />
 
     </LinearLayout>

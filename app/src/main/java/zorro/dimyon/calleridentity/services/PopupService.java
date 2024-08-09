@@ -87,6 +87,9 @@ public class PopupService extends Service {
         callerNameTV.setText(callerName);
         callerAddressTV.setText(address);
 
+        if (address.isEmpty()) {
+            callerAddressTV.setVisibility(View.GONE);
+        }
 
         if (!profileImageLink.isEmpty()) {
             Glide.with(this)
@@ -101,7 +104,7 @@ public class PopupService extends Service {
         }
 
         if (isSpamCall) {
-            floatingCallerInfoMainLayout.setBackgroundColor(getColor(R.color.red));
+            floatingCallerInfoMainLayout.setBackgroundResource(R.drawable.background_danger_floating_caller_info);
         }
 
         SwipeDismissLayout swipeLayout = (SwipeDismissLayout) popupView;
