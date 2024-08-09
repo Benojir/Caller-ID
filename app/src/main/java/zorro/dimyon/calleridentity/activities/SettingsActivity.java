@@ -15,47 +15,74 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.settings, new SettingsFragment())
                     .commit();
         }
+
         ActionBar actionBar = getSupportActionBar();
+
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            SwitchPreferenceCompat blockAllSpammers = findPreference("block_all_spammers");
-            SwitchPreferenceCompat blockTopSpammers = findPreference("block_top_spammers");
+            // Setting up dependencies between preferences
+            setupDependency("block_all_spammers", "block_top_spammers");
+            setupDependency("reject_all_incoming_calls", "reject_unknown_incoming_calls");
+        }
 
-            if (blockAllSpammers != null && blockTopSpammers != null) {
-                // Initialize the state when the preferences are first loaded
-                updateBlockTopSpammersState(blockAllSpammers.isChecked(), blockTopSpammers);
+        /**
+         * Sets up a dependency where enabling the master preference automatically enables
+         * and locks the dependent preference.
+         *
+         * @param masterKey    The key of the master SwitchPreferenceCompat.
+         * @param dependentKey The key of the dependent SwitchPreferenceCompat.
+         */
+        private void setupDependency(String masterKey, String dependentKey) {
+            SwitchPreferenceCompat masterPreference = findPreference(masterKey);
+            SwitchPreferenceCompat dependentPreference = findPreference(dependentKey);
 
-                blockAllSpammers.setOnPreferenceChangeListener((preference, newValue) -> {
-                    boolean isEnabled = (boolean) newValue;
-                    updateBlockTopSpammersState(isEnabled, blockTopSpammers);
-                    return true; // Allow the preference to be changed
+            if (masterPreference != null && dependentPreference != null) {
+                // Initialize the dependent preference state based on the master preference
+                updateDependentState(masterPreference.isChecked(), dependentPreference);
+
+                // Listener for changes in the master preference
+                masterPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean isEnabled = (Boolean) newValue;
+                    updateDependentState(isEnabled, dependentPreference);
+                    return true; // Allow the master preference state change
                 });
 
-                blockTopSpammers.setOnPreferenceChangeListener((preference, newValue) -> {
-                    return !blockAllSpammers.isChecked(); // Prevent changing if block_all_spammers is enabled
+                // Listener for attempts to change the dependent preference
+                dependentPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (masterPreference.isChecked()) {
+                        // If master is enabled, prevent changes to dependent
+                        return false;
+                    }
+                    return true;
                 });
             }
         }
-    }
 
-    private static void updateBlockTopSpammersState(boolean isBlockAllEnabled, SwitchPreferenceCompat blockTopSpammers) {
-        blockTopSpammers.setEnabled(!isBlockAllEnabled);
-        if (isBlockAllEnabled) {
-            blockTopSpammers.setChecked(true);
+        /**
+         * Updates the state of the dependent preference based on the master preference's state.
+         *
+         * @param isMasterEnabled    The current state of the master preference.
+         * @param dependentPreference The dependent SwitchPreferenceCompat to update.
+         */
+        private void updateDependentState(boolean isMasterEnabled, SwitchPreferenceCompat dependentPreference) {
+            dependentPreference.setChecked(isMasterEnabled || dependentPreference.isChecked());
+            dependentPreference.setEnabled(!isMasterEnabled);
         }
     }
 }

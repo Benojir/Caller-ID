@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             });
+        } else {
+            startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 

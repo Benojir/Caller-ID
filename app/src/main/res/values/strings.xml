@@ -37,7 +37,7 @@
     <string name="floating_window_outgoing_summary_on">A popup notification will appear for outgoing calls to numbers not saved in contacts.</string>
     <string name="floating_window_outgoing_summary_off">No popup notification will appear for outgoing calls.</string>
     <string name="floating_window_header">Floating Window</string>
-    <string name="reject_all_incoming_calls_summary_on">All incoming calls will be rejected. Even form your contacts.</string>
+    <string name="reject_all_incoming_calls_summary_on">All incoming calls will be rejected even from your contact numbers.</string>
     <string name="reject_all_incoming_calls_summary_off">All incoming calls are allowed.</string>
     <string name="reject_all_incoming_calls_title">Reject all incoming calls</string>
     <string name="reject_unknown_incoming_calls_summary_on">All unknown incoming calls will be rejected.</string>
