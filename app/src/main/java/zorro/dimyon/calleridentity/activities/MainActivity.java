@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,19 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
-import org.json.JSONArray;
-
 import zorro.dimyon.calleridentity.R;
-import zorro.dimyon.calleridentity.adapters.CallLogsAdapter;
 import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
-import zorro.dimyon.calleridentity.helpers.CallLogUtils;
-import zorro.dimyon.calleridentity.helpers.CustomMethods;
 import zorro.dimyon.calleridentity.helpers.LoginSaverPrefHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,15 +40,13 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.CALL_PHONE
     };
-    private static final String TAG = "MADARA";
 
     private boolean isUserLoggedIn = false;
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         checkAndRequestPermissions();
@@ -72,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         LoginSaverPrefHelper loginPrefHelper = new LoginSaverPrefHelper(this);
 
         if (loginPrefHelper.getApiKey().isEmpty()) {
-            binding.callLogsViewContainer.setVisibility(View.GONE);
+            binding.afterLoginDesignContainer.setVisibility(View.GONE);
             binding.loginWithOtpBtn.setVisibility(View.VISIBLE);
 
             binding.loginWithOtpBtn.setOnClickListener(v -> {
@@ -84,88 +73,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
-            binding.callLogsViewContainer.setVisibility(View.VISIBLE);
+            binding.afterLoginDesignContainer.setVisibility(View.VISIBLE);
+
+            binding.settingBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
+            binding.searchBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
         }
-    }
-
-    /**************************************************************************************************/
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (isUserLoggedIn && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-
-            CallLogUtils.getTodaysCallLogs(this, new CallLogUtils.CallLogsCallback() {
-                @Override
-                public void onCallLogsRetrieved(JSONArray callLogs) {
-                    if (callLogs.length() > 0) {
-                        binding.todayLogsContainer.setVisibility(View.VISIBLE);
-                        setRecyclerView(callLogs, binding.todayLogsRV);
-                    } else {
-                        binding.todayLogsContainer.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e(TAG, "onCallLogsRetrieved: ", e);
-                    binding.todayLogsContainer.setVisibility(View.GONE);
-                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
-                }
-            });
-
-            CallLogUtils.getYesterdaysCallLogs(this, new CallLogUtils.CallLogsCallback() {
-                @Override
-                public void onCallLogsRetrieved(JSONArray callLogs) {
-                    if (callLogs.length() > 0) {
-                        binding.yesterdayLogsContainer.setVisibility(View.VISIBLE);
-                        setRecyclerView(callLogs, binding.yesterdayLogsRV);
-                    } else {
-                        binding.yesterdayLogsContainer.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e(TAG, "onCallLogsRetrieved: ", e);
-                    binding.yesterdayLogsContainer.setVisibility(View.GONE);
-                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
-                }
-            });
-
-            CallLogUtils.getOlderCallLogs(this, new CallLogUtils.CallLogsCallback() {
-                @Override
-                public void onCallLogsRetrieved(JSONArray callLogs) {
-                    if (callLogs.length() > 0) {
-                        binding.olderLogsContainer.setVisibility(View.VISIBLE);
-                        setRecyclerView(callLogs, binding.olderLogsRV);
-                    } else {
-                        binding.olderLogsContainer.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e(TAG, "onCallLogsRetrieved: ", e);
-                    binding.olderLogsContainer.setVisibility(View.GONE);
-                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
-                }
-            });
-        }
-    }
-
-    /**************************************************************************************************/
-
-    private void setRecyclerView(JSONArray callLogs, RecyclerView recyclerView) {
-        CallLogsAdapter callLogsAdapter = new CallLogsAdapter(this, callLogs);
-        recyclerView.setAdapter(callLogsAdapter);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     /**************************************************************************************************/

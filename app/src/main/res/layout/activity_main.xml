@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,99 +24,75 @@
         android:textColor="@color/white"
         tools:ignore="HardcodedText" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/callLogsViewContainer"
+    <RelativeLayout
+        android:id="@+id/afterLoginDesignContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar_include"
-        android:paddingTop="10dp"
-        tools:ignore="SpeakableTextPresentCheck">
+        android:visibility="visible"
+        android:padding="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="200dp"
+            android:src="@drawable/main_activity_image"
+            android:layout_marginTop="100dp"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="image"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/shortDescriptionTV"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:gravity="center">
 
-            <LinearLayout
-                android:id="@+id/todayLogsContainer"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/settingBtn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:text="SETTINGS"
+                app:icon="@drawable/settings_24"
+                app:iconTint="?attr/textColor"
+                android:textColor="?attr/textColor"
+                android:layout_marginEnd="10dp"
+                tools:ignore="HardcodedText" />
 
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:padding="10dp"
-                    android:text="@string/today_call_logs_header"
-                    android:textColor="?attr/colorAccent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/todayLogsRV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/yesterdayLogsContainer"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/searchBtn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:padding="10dp"
-                    android:text="@string/yesterday_call_logs_header"
-                    android:textColor="?attr/colorAccent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/yesterdayLogsRV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/olderLogsContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:padding="10dp"
-                    android:text="@string/older_call_logs_header"
-                    android:textColor="?attr/colorAccent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/olderLogsRV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
-
-            </LinearLayout>
+                android:text="SEARCH"
+                app:icon="@drawable/search_24"
+                app:iconTint="?attr/textColor"
+                android:textColor="?attr/textColor"
+                android:layout_marginStart="10dp"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-
-
+        <TextView
+            android:id="@+id/shortDescriptionTV"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:padding="20dp"
+            android:text="@string/app_description_short"
+            android:textAlignment="center"
+            android:textColor="@color/grey"
+            tools:ignore="TextContrastCheck" />
+    </RelativeLayout>
 
 </RelativeLayout>
