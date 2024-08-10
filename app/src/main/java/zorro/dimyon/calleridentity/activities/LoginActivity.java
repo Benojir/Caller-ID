@@ -73,6 +73,15 @@ public class LoginActivity extends AppCompatActivity {
                         binding.verifyOtpContainer.setVisibility(View.VISIBLE);
                         Toast.makeText(LoginActivity.this, "OTP sent successfully!", Toast.LENGTH_SHORT).show();
 
+                        if (data.has("alreadyLoggedIn")) {
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+
                         String requestId = data.optString("requestId");
                         loginSaverPrefHelper.saveOTPRequestId(requestId);
                         loginSaverPrefHelper.saveNumber(justNumber);

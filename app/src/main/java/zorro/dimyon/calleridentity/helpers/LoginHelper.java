@@ -56,6 +56,21 @@ public class LoginHelper {
                                 return;
                             }
 
+                            if (status == 3) {
+                                if (responseObject.has("installationId")) {
+                                    String installationId = responseObject.getString("installationId");
+
+                                    LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(context);
+                                    loginSaverPrefHelper.saveApiKey(installationId);
+
+                                    JSONObject data = new JSONObject();
+                                    data.put("alreadyLoggedIn", true);
+                                    listener.onSuccess(data);
+                                } else {
+                                    listener.onFailure("Something went wrong.\n\n" + responseObject);
+                                }
+                            }
+
                             listener.onFailure(responseObject.toString());
                         }
                     }
