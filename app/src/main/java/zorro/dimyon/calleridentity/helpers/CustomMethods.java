@@ -6,8 +6,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -109,5 +114,47 @@ public class CustomMethods {
     public static String getCountryNameByCode(String countryCode) {
         Locale locale = new Locale("", countryCode);
         return locale.getDisplayCountry();
+    }
+
+//    ----------------------------------------------------------------------------------------------
+
+    // Method to get the country code from a phone number
+    public static int getCountryCode(Context context, String phoneNumber) {
+        // Create an instance of PhoneNumberUtil
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+
+        // Get the default country ISO code from the TelephonyManager
+        String defaultRegion = getCountryIso(context);
+
+        try {
+            // Parse the phone number
+            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, defaultRegion);
+
+            // Check if the phone number includes a country code
+            if (parsedNumber.hasCountryCode()) {
+                // Return the country code from the parsed number
+                return parsedNumber.getCountryCode();
+            } else {
+                // Return the default country code for the user's region
+                return phoneNumberUtil.getCountryCodeForRegion(defaultRegion);
+            }
+
+        } catch (NumberParseException e) {
+            System.err.println("NumberParseException was thrown: " + e.toString());
+            return -1; // Return an error code or handle appropriately
+        }
+    }
+
+    // Method to get the country ISO code from the TelephonyManager
+    private static String getCountryIso(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String countryIso = tm.getNetworkCountryIso().toUpperCase();
+
+        if (countryIso.isEmpty()) {
+            // Fallback to the SIM country if the network country is not available
+            countryIso = tm.getSimCountryIso().toUpperCase();
+        }
+
+        return countryIso;
     }
 }

@@ -15,10 +15,10 @@ public class CallsControlHelper {
 
     private static final String TAG = "MADARA";
     private final Context context;
-    private final CallScreeningService callScreeningService;
-    private final Call.Details callDetails;
+    private CallScreeningService callScreeningService;
+    private Call.Details callDetails;
     private final String phoneNumber;
-    private final CallScreeningService.CallResponse.Builder response;
+    private CallScreeningService.CallResponse.Builder response;
     private final String countryNameCode;
 
     public interface OnDataReceivedListener {
@@ -35,6 +35,12 @@ public class CallsControlHelper {
 
         LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(context);
         countryNameCode = loginSaverPrefHelper.getCountryNameCode();
+    }
+
+    public CallsControlHelper(Context context, String phoneNumber, String countryNameCode) {
+        this.context = context;
+        this.phoneNumber = phoneNumber;
+        this.countryNameCode = countryNameCode;
     }
 
 //    ----------------------------------------------------------------------------------------------
