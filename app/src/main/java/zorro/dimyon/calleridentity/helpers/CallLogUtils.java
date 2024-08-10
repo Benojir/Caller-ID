@@ -9,7 +9,6 @@ import android.provider.CallLog;
 import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -158,6 +157,9 @@ public class CallLogUtils {
                 Cursor cursor = cr.query(CallLog.Calls.CONTENT_URI, projection, selection, selectionArgs, null);
 
                 if (cursor != null) {
+
+                    int i = 0;
+
                     while (cursor.moveToNext()) {
                         String number = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER));
                         String date = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE));
@@ -175,7 +177,12 @@ public class CallLogUtils {
 
                         callLogs.put(callLog);
 
-                        Log.d(TAG, "Number: " + number + ", Date: " + callDate + ", Duration: " + duration + " seconds, Type: " + type);
+                        i++;
+
+                        if (i == 100) {
+                            break;
+                        }
+                        Log.d(TAG, "getOlderCallLogs: " + i);
                     }
                     cursor.close();
                 }

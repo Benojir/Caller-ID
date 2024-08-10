@@ -52,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MADARA";
 
     private boolean isUserLoggedIn = false;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         checkAndRequestPermissions();
@@ -84,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
             binding.callLogsViewContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**************************************************************************************************/
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (isUserLoggedIn && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
 
             CallLogUtils.getTodaysCallLogs(this, new CallLogUtils.CallLogsCallback() {
                 @Override
