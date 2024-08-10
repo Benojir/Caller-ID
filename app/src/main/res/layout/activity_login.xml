@@ -4,10 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp"
     tools:context=".activities.LoginActivity">
+
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/toolbar_include" />
 
     <LinearLayout
         android:id="@+id/getOtpContainer"
@@ -56,6 +59,7 @@
             android:layout_marginHorizontal="16dp"
             android:text="Get OTP"
             android:layout_marginTop="15dp"
+            android:textColor="@color/white"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
 
     </LinearLayout>
@@ -89,6 +93,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="15dp"
             android:text="Verify"
+            android:textColor="@color/white"
             tools:ignore="HardcodedText,VisualLintButtonSize" />
 
     </LinearLayout>

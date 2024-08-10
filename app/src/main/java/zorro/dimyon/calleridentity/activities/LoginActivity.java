@@ -10,10 +10,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.ActivityLoginBinding;
 import zorro.dimyon.calleridentity.helpers.CustomMethods;
 import zorro.dimyon.calleridentity.helpers.LoginHelper;
@@ -30,6 +34,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+//        ------------------------------------------------------------------------------------------
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_include);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.login));
+        }
+        toolbar.setTitleCentered(true);
+        toolbar.setNavigationIcon(AppCompatResources.getDrawable(this, R.drawable.arrow_back_24));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+//        ------------------------------------------------------------------------------------------
 
         loginSaverPrefHelper = new LoginSaverPrefHelper(this);
 
@@ -56,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                         pd.dismiss();
                         binding.getOtpContainer.setVisibility(View.GONE);
                         binding.verifyOtpContainer.setVisibility(View.VISIBLE);
+                        Toast.makeText(LoginActivity.this, "OTP sent successfully!", Toast.LENGTH_SHORT).show();
 
                         String requestId = data.optString("requestId");
                         loginSaverPrefHelper.saveOTPRequestId(requestId);
@@ -105,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "OTP verified successfully!", Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
