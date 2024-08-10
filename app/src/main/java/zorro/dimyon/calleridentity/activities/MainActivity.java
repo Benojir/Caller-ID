@@ -59,14 +59,9 @@ public class MainActivity extends AppCompatActivity {
         }
 //      --------------------------------------------------------------------------------------------
 
-        binding.loginWithOtpBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
-
-        binding.settingBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
-        binding.searchBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+        binding.loginWithOtpBtn.setOnClickListener(v -> startActivity(new Intent(this, LoginActivity.class)));
+        binding.settingBtn.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        binding.searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
     }
 
     /**********************************************************************************************/
