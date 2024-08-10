@@ -13,11 +13,15 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
+import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.ActivityMainBinding;
 import zorro.dimyon.calleridentity.helpers.LoginSaverPrefHelper;
 
@@ -41,10 +45,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         checkAndRequestPermissions();
+//      --------------------------------------------------------------------------------------------
+        getSupportFragmentManager();
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_include);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
+        }
+//      --------------------------------------------------------------------------------------------
 
-        LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(this);
+        LoginSaverPrefHelper loginPrefHelper = new LoginSaverPrefHelper(this);
 
-        if (loginSaverPrefHelper.getApiKey().isEmpty()) {
+        if (loginPrefHelper.getApiKey().isEmpty()) {
             binding.loginWithOtpBtn.setVisibility(View.VISIBLE);
 
             binding.loginWithOtpBtn.setOnClickListener(v -> {
@@ -54,9 +66,12 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             });
         } else {
+            binding.loginWithOtpBtn.setVisibility(View.GONE);
             startActivity(new Intent(this, SettingsActivity.class));
         }
     }
+
+//    ----------------------------------------------------------------------------------------------
 
     private void checkAndRequestPermissions() {
         if (areAllPermissionsGranted()) {

@@ -7,4 +7,8 @@
     </style>
 
     <style name="Theme.CallerIdentity" parent="Base.Theme.CallerIdentity" />
+
+    <style name="CustomToolbarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="fontFamily">@font/brandy</item>
+    </style>
 </resources>

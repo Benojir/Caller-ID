@@ -6,13 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/toolbar_include"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
     <Button
         android:id="@+id/loginWithOtpBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login with OTP"
         android:layout_centerInParent="true"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>
