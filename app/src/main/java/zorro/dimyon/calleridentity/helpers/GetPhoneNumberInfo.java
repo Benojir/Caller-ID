@@ -70,7 +70,12 @@ public class GetPhoneNumberInfo {
 
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "onResponse unsuccessful: " + response.code());
-                    new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Response code: " + response.code(), null));
+
+                    if (response.code() == 401) {
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Unauthorized", null));
+                    } else {
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Response code: " + response.code(), null));
+                    }
                     return;
                 }
 
