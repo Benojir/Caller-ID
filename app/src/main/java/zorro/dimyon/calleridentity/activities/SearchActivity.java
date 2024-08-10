@@ -124,6 +124,9 @@ public class SearchActivity extends AppCompatActivity {
                                     if (callerProfileImageLink.isEmpty()) {
                                         binding.callerProfileIV.setImageResource(R.drawable.error_outline_24);
                                     }
+                                } else {
+                                    binding.spamInfoTV.setVisibility(View.GONE);
+                                    binding.numberInfoCard.setBackgroundResource(R.drawable.background_caller_search_card_normal);
                                 }
 
                             } else {
