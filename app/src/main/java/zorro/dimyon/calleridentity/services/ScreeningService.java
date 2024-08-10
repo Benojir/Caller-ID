@@ -34,7 +34,7 @@ public class ScreeningService extends CallScreeningService {
         CallsControlHelper controlHelper = new CallsControlHelper(this, callDetails, phoneNumber);
         CallResponse.Builder response = new CallResponse.Builder();
 
-        AtomicBoolean isCallHandled = new AtomicBoolean(false); // Flag to track if call was handled
+        AtomicBoolean isCallHandled = new AtomicBoolean(false); // Flag to track if callback was handled
 
         if (isIncoming) {
 
