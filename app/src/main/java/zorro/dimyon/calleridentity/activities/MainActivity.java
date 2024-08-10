@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         LoginSaverPrefHelper loginPrefHelper = new LoginSaverPrefHelper(this);
 
         if (loginPrefHelper.getApiKey().isEmpty()) {
+            binding.callLogsViewContainer.setVisibility(View.GONE);
             binding.loginWithOtpBtn.setVisibility(View.VISIBLE);
 
             binding.loginWithOtpBtn.setOnClickListener(v -> {
@@ -72,9 +73,13 @@ public class MainActivity extends AppCompatActivity {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
         }
+
+//        ------------------------------------------------------------------------------------------
+
+        
     }
 
-//    ----------------------------------------------------------------------------------------------
+/**************************************************************************************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //    ----------------------------------------------------------------------------------------------
+/**************************************************************************************************/
 
     private void checkAndRequestPermissions() {
         if (areAllPermissionsGranted()) {

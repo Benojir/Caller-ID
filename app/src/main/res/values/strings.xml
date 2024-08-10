@@ -47,4 +47,7 @@
     <string name="login">Login</string>
     <string name="search_number">Search number…</string>
     <string name="search_activity_title">Number Lookup</string>
+    <string name="today_call_logs_header">Today</string>
+    <string name="yesterday_call_logs_header">Yesterday</string>
+    <string name="older_call_logs_header">Older</string>
 </resources>
