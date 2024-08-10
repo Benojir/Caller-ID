@@ -42,7 +42,7 @@
             android:id="@+id/callerNameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nur Alam"
+            android:text="Benojir Sultana"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:shadowColor="@color/black"

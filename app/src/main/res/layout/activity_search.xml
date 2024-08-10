@@ -5,6 +5,119 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".activities.SearchActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/background_input_number_container"
+        android:layout_alignParentTop="true"
+        android:id="@+id/inputBoxContainer"
+        android:paddingHorizontal="10dp">
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/round_transparent_ripple_button"
+            android:contentDescription="Back"
+            android:padding="10dp"
+            android:src="@drawable/arrow_back_24"
+            app:tint="?attr/colorPrimary"
+            tools:ignore="HardcodedText,TouchTargetSizeCheck" />
+
+        <EditText
+            android:id="@+id/inputNumber"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/backBtn"
+            android:layout_alignParentEnd="true"
+            android:importantForAutofill="no"
+            android:paddingHorizontal="10dp"
+            android:hint="@string/search_number"
+            android:inputType="phone"
+            android:background="@null"
+            tools:ignore="VisualLintTextFieldSize" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loaderProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerInParent="true" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/inputBoxContainer"
+        android:background="@drawable/background_caller_search_card_normal"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp"
+        android:layout_marginTop="10dp"
+        tools:ignore="HardcodedText">
+
+        <ImageView
+            android:id="@+id/callerProfileIV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Profile DP"
+            android:src="@drawable/verified_user_24"
+            android:background="@drawable/background_circle_shape_imageview"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:padding="15dp" />
+
+        <TextView
+            android:id="@+id/callerNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Benojir Sultana"
+            android:layout_below="@+id/callerProfileIV"
+            android:layout_centerHorizontal="true"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/phoneNumberTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="+911234567890"
+            android:layout_below="@+id/callerNameTV"
+            android:layout_centerHorizontal="true"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/callerLocationTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="West Bengal, India"
+            android:layout_below="@+id/phoneNumberTV"
+            android:layout_centerHorizontal="true"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/spamInfoTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="TOP SPAMMER (Reported 15706 times)"
+            android:layout_below="@+id/callerLocationTV"
+            android:layout_centerHorizontal="true"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:visibility="gone"
+            android:layout_marginTop="10dp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

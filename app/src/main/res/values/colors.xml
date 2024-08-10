@@ -7,4 +7,6 @@
     <color name="theme_color_dark">#673AB7</color>
     <color name="theme_color_light">#5C00FF</color>
     <color name="accent_color_dark">#9861FA</color>
+    <color name="grey">#888888</color>
+    <color name="light_grey">#AFAFAF</color>
 </resources>
