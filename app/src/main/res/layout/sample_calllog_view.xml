@@ -58,14 +58,15 @@
             android:id="@+id/callBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/phone_24"
-            android:padding="10dp"
-            android:background="@drawable/round_transparent_ripple_button"
-            app:tint="?attr/textColor"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="5dp"
-            android:contentDescription="Call" />
+            android:background="@drawable/round_transparent_ripple_button"
+            android:contentDescription="Call"
+            android:padding="10dp"
+            android:src="@drawable/phone_24"
+            app:tint="?attr/textColor"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </RelativeLayout>
 
