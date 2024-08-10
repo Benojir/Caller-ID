@@ -86,7 +86,7 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-            
+
 
         </LinearLayout>
 
