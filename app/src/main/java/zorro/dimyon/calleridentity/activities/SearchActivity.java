@@ -130,6 +130,7 @@ public class SearchActivity extends AppCompatActivity {
                                 }
 
                             } else {
+                                binding.numberInfoCard.setBackgroundResource(R.drawable.background_caller_search_card_normal);
                                 binding.callerNameTV.setText(phoneNumber);
                                 binding.phoneNumberTV.setText(phoneNumber);
                                 binding.callerLocationTV.setText(CustomMethods.getCountryNameByCountryNameCode(countryISOCode));

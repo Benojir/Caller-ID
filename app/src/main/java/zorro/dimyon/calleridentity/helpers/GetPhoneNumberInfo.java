@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -73,6 +74,11 @@ public class GetPhoneNumberInfo {
 
                     if (response.code() == 401) {
                         new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Unauthorized", null));
+                    } else if (response.code() == 429) {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            listener.onReceivedResponse(false, "Too many requests. Retry after sometimes.", null);
+                            Toast.makeText(context, "Too many requests", Toast.LENGTH_SHORT).show();
+                        });
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Response code: " + response.code(), null));
                     }
