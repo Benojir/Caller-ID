@@ -21,7 +21,7 @@ public class CallLogUtils {
 
 //    -----------------------------Get today call logs----------------------------------------------
 
-    public JSONArray getTodaysCallLogs(Context context) throws JSONException {
+    public static JSONArray getTodaysCallLogs(Context context) throws JSONException {
         JSONArray callLogs = new JSONArray();
         ContentResolver cr = context.getContentResolver();
 
@@ -48,7 +48,7 @@ public class CallLogUtils {
             String number = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER));
             String date = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE));
             String duration = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION));
-            String type = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
+            int type = cursor.getInt(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
 
             // Convert the date from milliseconds to a readable format
             String callDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date(Long.parseLong(date)));
@@ -73,7 +73,7 @@ public class CallLogUtils {
         return callLogs;
     }
 
-    private long getStartOfTodayInMillis() {
+    private static long getStartOfTodayInMillis() {
         // Get the current time and reset to midnight
         Date today = new Date();
         today.setHours(0);
@@ -84,7 +84,7 @@ public class CallLogUtils {
 
 //    ---------------------------------Get yesterday call logs--------------------------------------
 
-    public JSONArray getYesterdaysCallLogs(Context context) throws JSONException {
+    public static JSONArray getYesterdaysCallLogs(Context context) throws JSONException {
         JSONArray callLogs = new JSONArray();
         ContentResolver cr = context.getContentResolver();
 
@@ -111,7 +111,7 @@ public class CallLogUtils {
             String number = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER));
             String date = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE));
             String duration = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION));
-            String type = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
+            int type = cursor.getInt(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
 
             // Convert the date from milliseconds to a readable format
             String callDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date(Long.parseLong(date)));
@@ -137,7 +137,7 @@ public class CallLogUtils {
     }
 
     // Helper method to get the start and end of yesterday in milliseconds
-    private long[] getStartAndEndOfYesterdayInMillis() {
+    private static long[] getStartAndEndOfYesterdayInMillis() {
         Calendar calendar = Calendar.getInstance();
 
         // Set to the start of today
@@ -159,7 +159,7 @@ public class CallLogUtils {
 
 //    -----------------------------Get older call logs----------------------------------------------
 
-    public JSONArray getOlderCallLogs(Context context) throws JSONException {
+    public static JSONArray getOlderCallLogs(Context context) throws JSONException {
         JSONArray callLogs = new JSONArray();
         ContentResolver cr = context.getContentResolver();
 
@@ -186,7 +186,7 @@ public class CallLogUtils {
             String number = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.NUMBER));
             String date = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE));
             String duration = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION));
-            String type = cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
+            int type = cursor.getInt(cursor.getColumnIndexOrThrow(CallLog.Calls.TYPE));
 
             // Convert the date from milliseconds to a readable format
             String callDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date(Long.parseLong(date)));
@@ -212,7 +212,7 @@ public class CallLogUtils {
     }
 
     // Helper method to get the end of yesterday in milliseconds
-    private long getEndOfYesterdayInMillis() {
+    private static long getEndOfYesterdayInMillis() {
         Calendar calendar = Calendar.getInstance();
 
         // Set to the start of today

@@ -25,13 +25,15 @@
             android:adjustViewBounds="true" />
 
         <LinearLayout
+            android:id="@+id/contactNameAndCallLogContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="10dp"
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
-            android:layout_toEndOf="@+id/contactProfileIV">
+            android:layout_toEndOf="@+id/contactProfileIV"
+            android:layout_toStartOf="@+id/callBtn">
 
             <TextView
                 android:id="@+id/contactNameTV"
@@ -74,6 +76,7 @@
         android:id="@+id/hiddenViewsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <com.google.android.material.divider.MaterialDivider
