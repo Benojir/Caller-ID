@@ -52,11 +52,12 @@ public class LoginHelper {
                         } else {
 
                             if (status == 5 || status == 6) {
-                                listener.onFailure("Too many request attempted. Try again after 1 hour later.");
-                                return;
-                            }
-
-                            if (status == 3) {
+                                if (responseObject.has("message")) {
+                                    listener.onFailure(responseObject.getString("message"));
+                                } else {
+                                    listener.onFailure("Too many request attempted. Try again after 1 hour later.");
+                                }
+                            } else if (status == 3) {
                                 if (responseObject.has("installationId")) {
                                     String installationId = responseObject.getString("installationId");
 
@@ -69,9 +70,9 @@ public class LoginHelper {
                                 } else {
                                     listener.onFailure("Something went wrong.\n\n" + responseObject);
                                 }
+                            } else {
+                                listener.onFailure(responseObject.toString());
                             }
-
-                            listener.onFailure(responseObject.toString());
                         }
                     }
                 } catch (JSONException e) {
@@ -154,7 +155,7 @@ public class LoginHelper {
                                     listener.onComplete(false, errorMessage);
                                 }
                             });
-                            
+
                         } else {
                             listener.onComplete(false, "Failed to verify OTP \n\n" + responseObject);
                         }
