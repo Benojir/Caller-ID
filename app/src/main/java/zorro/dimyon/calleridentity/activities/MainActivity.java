@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.READ_PHONE_STATE
     };
+
+    private boolean isUserLoggedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +70,38 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             });
         } else {
+            isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
             startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 
 //    ----------------------------------------------------------------------------------------------
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        MenuItem searchBtn = menu.findItem(R.id.menu_search_action);
+        MenuItem settingsBtn = menu.findItem(R.id.menu_settings_action);
+
+        if (!isUserLoggedIn) {
+            searchBtn.setVisible(false);
+            settingsBtn.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_settings_action) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        } else if (item.getItemId() == R.id.menu_search_action) {
+            startActivity(new Intent(this, SearchActivity.class));
+        }
+        return true;
+    }
+
+    //    ----------------------------------------------------------------------------------------------
 
     private void checkAndRequestPermissions() {
         if (areAllPermissionsGranted()) {

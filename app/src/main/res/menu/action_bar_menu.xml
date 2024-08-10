@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:title="12"
+        android:id="@+id/menu_selected_items_count"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+    <item
+        android:title="Search"
+        android:id="@+id/menu_search_action"
+        android:icon="@drawable/search_24"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <item
+        android:title="Settings"
+        android:id="@+id/menu_settings_action"
+        android:icon="@drawable/settings_24"
+        app:showAsAction="always" />
+</menu>
