@@ -23,79 +23,91 @@
         android:textColor="@color/white"
         tools:ignore="HardcodedText" />
 
-    <LinearLayout
-        android:id="@+id/callLogsViewContainer"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        android:orientation="vertical"
         android:layout_below="@+id/toolbar_include">
 
         <LinearLayout
-            android:id="@+id/todayLogsContainer"
+            android:id="@+id/callLogsViewContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/today_call_logs_header"
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="?attr/colorAccent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/todayLogsRV"
+            <LinearLayout
+                android:id="@+id/todayLogsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/today_call_logs_header"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:padding="10dp"
+                    android:textColor="?attr/colorAccent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/todayLogsRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/yesterdayLogsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yesterday_call_logs_header"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:padding="10dp"
+                    android:textColor="?attr/colorAccent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/yesterdayLogsRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/olderLogsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/older_call_logs_header"
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:padding="10dp"
+                    android:textColor="?attr/colorAccent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/olderLogsRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/yesterdayLogsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
+    </androidx.core.widget.NestedScrollView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/yesterday_call_logs_header"
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="?attr/colorAccent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/yesterdayLogsRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/olderLogsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/older_call_logs_header"
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="?attr/colorAccent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/olderLogsRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
 </RelativeLayout>

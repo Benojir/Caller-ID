@@ -81,42 +81,42 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             });
+
         } else {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
-        }
+            binding.callLogsViewContainer.setVisibility(View.VISIBLE);
 
-//        ------------------------------------------------------------------------------------------
+            try {
+                JSONArray todayCallLogs = CallLogUtils.getTodaysCallLogs(this);
+                JSONArray yesterdayCallLogs = CallLogUtils.getYesterdaysCallLogs(this);
+                JSONArray olderCallLogs = CallLogUtils.getOlderCallLogs(this);
 
-        try {
-            JSONArray todayCallLogs = CallLogUtils.getTodaysCallLogs(this);
-            JSONArray yesterdayCallLogs = CallLogUtils.getYesterdaysCallLogs(this);
-            JSONArray olderCallLogs = CallLogUtils.getOlderCallLogs(this);
+                if (todayCallLogs.length() > 0) {
+                    binding.todayLogsContainer.setVisibility(View.VISIBLE);
+                    setRecyclerView(todayCallLogs, binding.todayLogsRV);
+                } else {
+                    binding.todayLogsContainer.setVisibility(View.GONE);
+                }
 
-            if (todayCallLogs.length() > 0) {
-                binding.todayLogsContainer.setVisibility(View.VISIBLE);
-                setRecyclerView(todayCallLogs, binding.todayLogsRV);
-            } else {
-                binding.todayLogsContainer.setVisibility(View.GONE);
+                if (yesterdayCallLogs.length() > 0) {
+                    binding.yesterdayLogsContainer.setVisibility(View.VISIBLE);
+                    setRecyclerView(yesterdayCallLogs, binding.yesterdayLogsRV);
+                } else {
+                    binding.yesterdayLogsContainer.setVisibility(View.GONE);
+                }
+
+                if (olderCallLogs.length() > 0) {
+                    binding.olderLogsContainer.setVisibility(View.VISIBLE);
+                    setRecyclerView(olderCallLogs, binding.olderLogsRV);
+                } else {
+                    binding.olderLogsContainer.setVisibility(View.GONE);
+                }
+
+            } catch (JSONException e) {
+                Log.e(TAG, "onCreate: ", e);
+                CustomMethods.errorAlert(this, "Error", e.getMessage(), "OK", true);
             }
-
-            if (yesterdayCallLogs.length() > 0) {
-                binding.yesterdayLogsContainer.setVisibility(View.VISIBLE);
-                setRecyclerView(yesterdayCallLogs, binding.yesterdayLogsRV);
-            } else {
-                binding.yesterdayLogsContainer.setVisibility(View.GONE);
-            }
-
-            if (olderCallLogs.length() > 0) {
-                binding.olderLogsContainer.setVisibility(View.VISIBLE);
-                setRecyclerView(olderCallLogs, binding.olderLogsRV);
-            } else {
-                binding.olderLogsContainer.setVisibility(View.GONE);
-            }
-
-        } catch (JSONException e) {
-            Log.e(TAG, "onCreate: ", e);
-            CustomMethods.errorAlert(this, "Error", e.getMessage(), "OK", true);
         }
     }
 
