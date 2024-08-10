@@ -40,13 +40,14 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.CALL_PHONE
     };
+    private ActivityMainBinding binding;
 
     private boolean isUserLoggedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         checkAndRequestPermissions();
@@ -58,29 +59,35 @@ public class MainActivity extends AppCompatActivity {
         }
 //      --------------------------------------------------------------------------------------------
 
+        binding.loginWithOtpBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
+        binding.settingBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
+        binding.searchBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+    }
+
+    /**********************************************************************************************/
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         LoginSaverPrefHelper loginPrefHelper = new LoginSaverPrefHelper(this);
 
         if (loginPrefHelper.getApiKey().isEmpty()) {
-            binding.afterLoginDesignContainer.setVisibility(View.GONE);
             binding.loginWithOtpBtn.setVisibility(View.VISIBLE);
-
-            binding.loginWithOtpBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            });
+            binding.afterLoginDesignContainer.setVisibility(View.GONE);
         } else {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
             binding.afterLoginDesignContainer.setVisibility(View.VISIBLE);
-
-            binding.settingBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
-            binding.searchBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
         }
     }
 
-    /**************************************************************************************************/
+    /**********************************************************************************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
