@@ -5,122 +5,138 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     tools:context=".activities.SearchActivity">
 
+    <include
+        android:id="@+id/toolbar_include"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/background_input_number_container"
-        android:layout_alignParentTop="true"
-        android:id="@+id/inputBoxContainer"
-        android:paddingHorizontal="10dp">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_include"
+        android:padding="10dp">
 
-        <ImageButton
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/round_transparent_ripple_button"
-            android:contentDescription="Back"
-            android:padding="10dp"
-            android:src="@drawable/arrow_back_24"
-            app:tint="?attr/colorPrimary"
-            tools:ignore="HardcodedText,TouchTargetSizeCheck" />
-
-        <EditText
-            android:id="@+id/inputPhoneNumberET"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@id/backBtn"
-            android:layout_alignParentEnd="true"
-            android:importantForAutofill="no"
-            android:paddingHorizontal="10dp"
-            android:hint="@string/search_number"
-            android:inputType="phone"
-            android:background="@null"
-            tools:ignore="VisualLintTextFieldSize" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/background_input_number_container"
+            android:id="@+id/inputBoxContainer"
+            android:layout_alignParentTop="true"
+            android:paddingHorizontal="10dp">
 
-    </RelativeLayout>
+            <ImageButton
+                android:id="@+id/clearBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/round_transparent_ripple_button"
+                android:contentDescription="clear"
+                android:padding="10dp"
+                android:src="@drawable/clear_24"
+                app:tint="?attr/colorPrimary"
+                tools:ignore="HardcodedText,TouchTargetSizeCheck" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/loaderProgressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_centerInParent="true" />
+            <EditText
+                android:id="@+id/inputPhoneNumberET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/clearBtn"
+                android:layout_alignParentEnd="true"
+                android:importantForAutofill="no"
+                android:paddingHorizontal="10dp"
+                android:hint="@string/search_number"
+                android:inputType="phone"
+                android:background="@null"
+                tools:ignore="VisualLintTextFieldSize" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/inputBoxContainer"
-        android:background="@drawable/background_caller_search_card_normal"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        tools:ignore="HardcodedText">
+        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/callerProfileIV"
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/loaderProgressBar"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Profile DP"
-            android:src="@drawable/verified_user_24"
-            android:background="@drawable/background_circle_shape_imageview"
-            android:layout_centerHorizontal="true"
-            android:adjustViewBounds="true"
-            android:padding="15dp" />
-
-        <TextView
-            android:id="@+id/callerNameTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Benojir Sultana"
-            android:layout_below="@+id/callerProfileIV"
-            android:layout_centerHorizontal="true"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:id="@+id/phoneNumberTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="+911234567890"
-            android:layout_below="@+id/callerNameTV"
-            android:layout_centerHorizontal="true"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:id="@+id/callerLocationTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="West Bengal, India"
-            android:layout_below="@+id/phoneNumberTV"
-            android:layout_centerHorizontal="true"
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:id="@+id/spamInfoTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="☠️ Spam number (TOP SPAMMER)"
-            android:layout_below="@+id/callerLocationTV"
-            android:layout_centerHorizontal="true"
-            style="@style/TextAppearance.AppCompat.Body2"
             android:visibility="gone"
-            android:background="@drawable/background_spam_warning_text"
-            android:paddingVertical="5dp"
+            android:layout_centerInParent="true" />
+
+        <RelativeLayout
+            android:id="@+id/numberInfoCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/inputBoxContainer"
+            android:background="@drawable/background_caller_search_card_normal"
             android:paddingHorizontal="10dp"
-            android:layout_marginTop="10dp" />
+            android:paddingVertical="15dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/callerProfileIV"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="Profile DP"
+                android:src="@drawable/verified_user_24"
+                android:background="@color/white"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+                android:adjustViewBounds="true"/>
+
+            <TextView
+                android:id="@+id/callerNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Benojir Sultana"
+                android:layout_below="@+id/callerProfileIV"
+                android:layout_centerHorizontal="true"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/phoneNumberTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="+911234567890"
+                android:layout_below="@+id/callerNameTV"
+                android:layout_centerHorizontal="true"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/callerLocationTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="West Bengal, India"
+                android:layout_below="@+id/phoneNumberTV"
+                android:layout_centerHorizontal="true"
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/spamInfoTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="☠️ Spam number (TOP SPAMMER)"
+                android:layout_below="@+id/callerLocationTV"
+                android:layout_centerHorizontal="true"
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:visibility="gone"
+                android:background="@drawable/background_spam_warning_text"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginTop="10dp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

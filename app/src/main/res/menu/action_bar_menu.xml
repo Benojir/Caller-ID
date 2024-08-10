@@ -5,17 +5,11 @@
     tools:ignore="HardcodedText">
 
     <item
-        android:title="12"
-        android:id="@+id/menu_selected_items_count"
-        app:showAsAction="ifRoom"
-        android:visible="false" />
-
-    <item
         android:title="Search"
         android:id="@+id/menu_search_action"
         android:icon="@drawable/search_24"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
 
     <item
         android:title="Settings"

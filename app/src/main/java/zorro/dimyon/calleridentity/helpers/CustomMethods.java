@@ -7,6 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -22,6 +27,8 @@ import java.util.zip.GZIPInputStream;
 import zorro.dimyon.calleridentity.R;
 
 public class CustomMethods {
+
+    private static final String TAG = "MADARA";
 
     public static boolean isValidPhoneNumber(String phoneNumber) {
         // Remove country code for validation
@@ -156,7 +163,7 @@ public class CustomMethods {
             }
 
         } catch (NumberParseException e) {
-            System.err.println("NumberParseException was thrown: " + e.toString());
+            Log.e(TAG, "getCountryCode: ", e);
             return -1; // Return an error code or handle appropriately
         }
     }
@@ -173,4 +180,23 @@ public class CustomMethods {
 
         return countryIso;
     }
+
+//--------------------------------------------------------------------------------------------------
+
+    public static void showKeyBoard(Activity activity, EditText editText) {
+        if (editText.requestFocus()) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+//--------------------------------------------------------------------------------------------------
 }

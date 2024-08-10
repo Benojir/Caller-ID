@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkAndRequestPermissions();
 //      --------------------------------------------------------------------------------------------
-        getSupportFragmentManager();
         MaterialToolbar toolbar = findViewById(R.id.toolbar_include);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
-            startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 

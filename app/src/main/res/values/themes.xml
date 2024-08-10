@@ -12,4 +12,9 @@
     <style name="CustomToolbarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="fontFamily">@font/brandy</item>
     </style>
+
+    <style name="CircleImageViewStyle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

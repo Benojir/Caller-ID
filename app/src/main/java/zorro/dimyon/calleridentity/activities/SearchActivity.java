@@ -7,9 +7,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+
+import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONException;
 
+import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.databinding.ActivitySearchBinding;
 import zorro.dimyon.calleridentity.helpers.CallsControlHelper;
 import zorro.dimyon.calleridentity.helpers.CustomMethods;
@@ -24,13 +29,28 @@ public class SearchActivity extends AppCompatActivity {
         ActivitySearchBinding binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+//        ------------------------------------------------------------------------------------------
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_include);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.search_activity_title));
+        }
+        toolbar.setTitleCentered(true);
+        toolbar.setNavigationIcon(AppCompatResources.getDrawable(this, R.drawable.arrow_back_24));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+//        ------------------------------------------------------------------------------------------
+
+        binding.clearBtn.setOnClickListener(v -> {
+            binding.inputPhoneNumberET.setText("");
+            CustomMethods.showKeyBoard(this, binding.inputPhoneNumberET);
+        });
 
         binding.inputPhoneNumberET.setOnEditorActionListener((v, actionId, event) -> {
 
             if (actionId == EditorInfo.IME_ACTION_DONE && !binding.inputPhoneNumberET.getText().toString().isEmpty()) {
 
-                binding.inputBoxContainer.setVisibility(View.GONE);
+                CustomMethods.hideKeyboard(this, binding.inputPhoneNumberET);
+                binding.numberInfoCard.setVisibility(View.GONE);
                 binding.loaderProgressBar.setVisibility(View.VISIBLE);
 
                 String phoneNumber = binding.inputPhoneNumberET.getText().toString().trim();
@@ -50,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
 
                     controlHelper.getCallerInfo(callerInfo -> {
 
-                        binding.inputBoxContainer.setVisibility(View.VISIBLE);
+                        binding.numberInfoCard.setVisibility(View.VISIBLE);
                         binding.loaderProgressBar.setVisibility(View.GONE);
 
                         try {
@@ -59,6 +79,7 @@ public class SearchActivity extends AppCompatActivity {
                                 String callerName = phoneNumber;
                                 String address = CustomMethods.getCountryNameByCountryNameCode(countryISOCode);
                                 boolean isSpamCall = false;
+                                String callerProfileImageLink = "";
 
                                 if (callerInfo.has("callerName")) {
                                     callerName = callerInfo.getString("callerName");
@@ -72,12 +93,25 @@ public class SearchActivity extends AppCompatActivity {
                                 binding.phoneNumberTV.setText(phoneNumber);
                                 binding.callerLocationTV.setText(address);
 
+                                if (callerInfo.has("callerProfileImageLink")) {
+                                    callerProfileImageLink = callerInfo.getString("callerProfileImageLink");
+
+                                    Glide.with(this)
+                                            .load(callerProfileImageLink)
+                                            .placeholder(R.drawable.verified_user_24)
+                                            .error(R.drawable.verified_user_24)
+                                            .into(binding.callerProfileIV);
+                                } else {
+                                    binding.callerProfileIV.setImageResource(R.drawable.verified_user_24);
+                                }
+
                                 if (callerInfo.has("isSpamCall")) {
                                     isSpamCall = callerInfo.getBoolean("isSpamCall");
                                 }
 
                                 if (isSpamCall) {
                                     binding.spamInfoTV.setVisibility(View.VISIBLE);
+                                    binding.numberInfoCard.setBackgroundResource(R.drawable.background_caller_search_card_danger);
 
                                     String spamDescription = "☠️ Spam number";
 
@@ -86,12 +120,18 @@ public class SearchActivity extends AppCompatActivity {
                                         spamDescription += " (" + spamType + ")";
                                     }
                                     binding.spamInfoTV.setText(spamDescription);
+
+                                    if (callerProfileImageLink.isEmpty()) {
+                                        binding.callerProfileIV.setImageResource(R.drawable.error_outline_24);
+                                    }
                                 }
+
                             } else {
                                 binding.callerNameTV.setText(phoneNumber);
                                 binding.phoneNumberTV.setText(phoneNumber);
                                 binding.callerLocationTV.setText(CustomMethods.getCountryNameByCountryNameCode(countryISOCode));
                                 binding.spamInfoTV.setVisibility(View.GONE);
+                                Log.d(TAG, "onCreate: Cannot fetched number info.");
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "onCreate: ", e);
@@ -102,9 +142,9 @@ public class SearchActivity extends AppCompatActivity {
 
                 } else {
                     Toast.makeText(this, "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onCreate: invalid phone number " + phoneNumber);
                     return false;
                 }
-
                 return true;
             } else {
                 return false;
