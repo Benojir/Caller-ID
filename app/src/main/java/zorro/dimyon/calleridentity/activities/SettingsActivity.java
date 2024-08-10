@@ -1,11 +1,15 @@
 package zorro.dimyon.calleridentity.activities;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import zorro.dimyon.calleridentity.R;
 
@@ -23,11 +27,16 @@ public class SettingsActivity extends AppCompatActivity {
                     .commit();
         }
 
-        ActionBar actionBar = getSupportActionBar();
-
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+//        ------------------------------------------------------------------------------------------
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_include);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(getResources().getString(R.string.settings));
         }
+
+        toolbar.setNavigationIcon(AppCompatResources.getDrawable(this, R.drawable.arrow_back_24));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+//        ------------------------------------------------------------------------------------------
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -65,11 +74,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                 // Listener for attempts to change the dependent preference
                 dependentPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    if (masterPreference.isChecked()) {
-                        // If master is enabled, prevent changes to dependent
-                        return false;
-                    }
-                    return true;
+                    // If master is enabled, prevent changes to dependent
+                    return !masterPreference.isChecked();
                 });
             }
         }

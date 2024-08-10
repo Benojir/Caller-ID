@@ -43,4 +43,5 @@
     <string name="reject_unknown_incoming_calls_summary_on">All unknown incoming calls will be rejected.</string>
     <string name="reject_unknown_incoming_calls_summary_off">All calls are allowed.</string>
     <string name="reject_unknown_incoming_calls_title">Reject unknown calls</string>
+    <string name="settings">Settings</string>
 </resources>
