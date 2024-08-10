@@ -179,6 +179,11 @@ public class CallsControlHelper {
                 }
             } else {
                 listener.onReceived(null);
+
+                if (message.toLowerCase().contains("unauthorized")) {
+                    LoginSaverPrefHelper loginSaverPrefHelper = new LoginSaverPrefHelper(context);
+                    loginSaverPrefHelper.saveApiKey("");
+                }
             }
         });
     }
