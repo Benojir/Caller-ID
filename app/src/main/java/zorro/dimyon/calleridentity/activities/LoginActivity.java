@@ -3,7 +3,6 @@ package zorro.dimyon.calleridentity.activities;
 import static zorro.dimyon.calleridentity.helpers.CustomMethods.isValidPhoneNumber;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -74,10 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "OTP sent successfully!", Toast.LENGTH_SHORT).show();
 
                         if (data.has("alreadyLoggedIn")) {
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
                             Toast.makeText(getApplicationContext(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
                             finish();
                             return;
                         }
@@ -126,11 +123,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (isVerified) {
                             loginSaverPrefHelper.saveApiKey(message);
-
-                            Intent intent = new Intent(this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
                             Toast.makeText(getApplicationContext(), "OTP verified successfully!", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
                             finish();
                         } else {
                             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
