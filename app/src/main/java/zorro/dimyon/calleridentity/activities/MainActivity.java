@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import zorro.dimyon.calleridentity.R;
 import zorro.dimyon.calleridentity.adapters.CallLogsAdapter;
@@ -81,46 +80,71 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             });
-
         } else {
             isUserLoggedIn = true;
             binding.loginWithOtpBtn.setVisibility(View.GONE);
             binding.callLogsViewContainer.setVisibility(View.VISIBLE);
 
-            try {
-                JSONArray todayCallLogs = CallLogUtils.getTodaysCallLogs(this);
-                JSONArray yesterdayCallLogs = CallLogUtils.getYesterdaysCallLogs(this);
-                JSONArray olderCallLogs = CallLogUtils.getOlderCallLogs(this);
+            CallLogUtils.getTodaysCallLogs(this, new CallLogUtils.CallLogsCallback() {
+                @Override
+                public void onCallLogsRetrieved(JSONArray callLogs) {
+                    if (callLogs.length() > 0) {
+                        binding.todayLogsContainer.setVisibility(View.VISIBLE);
+                        setRecyclerView(callLogs, binding.todayLogsRV);
+                    } else {
+                        binding.todayLogsContainer.setVisibility(View.GONE);
+                    }
+                }
 
-                if (todayCallLogs.length() > 0) {
-                    binding.todayLogsContainer.setVisibility(View.VISIBLE);
-                    setRecyclerView(todayCallLogs, binding.todayLogsRV);
-                } else {
+                @Override
+                public void onError(Exception e) {
+                    Log.e(TAG, "onCallLogsRetrieved: ", e);
                     binding.todayLogsContainer.setVisibility(View.GONE);
+                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
+                }
+            });
+
+            CallLogUtils.getYesterdaysCallLogs(this, new CallLogUtils.CallLogsCallback() {
+                @Override
+                public void onCallLogsRetrieved(JSONArray callLogs) {
+                    if (callLogs.length() > 0) {
+                        binding.yesterdayLogsContainer.setVisibility(View.VISIBLE);
+                        setRecyclerView(callLogs, binding.yesterdayLogsRV);
+                    } else {
+                        binding.yesterdayLogsContainer.setVisibility(View.GONE);
+                    }
                 }
 
-                if (yesterdayCallLogs.length() > 0) {
-                    binding.yesterdayLogsContainer.setVisibility(View.VISIBLE);
-                    setRecyclerView(yesterdayCallLogs, binding.yesterdayLogsRV);
-                } else {
+                @Override
+                public void onError(Exception e) {
+                    Log.e(TAG, "onCallLogsRetrieved: ", e);
                     binding.yesterdayLogsContainer.setVisibility(View.GONE);
+                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
+                }
+            });
+
+            CallLogUtils.getOlderCallLogs(this, new CallLogUtils.CallLogsCallback() {
+                @Override
+                public void onCallLogsRetrieved(JSONArray callLogs) {
+                    if (callLogs.length() > 0) {
+                        binding.olderLogsContainer.setVisibility(View.VISIBLE);
+                        setRecyclerView(callLogs, binding.olderLogsRV);
+                    } else {
+                        binding.olderLogsContainer.setVisibility(View.GONE);
+                    }
                 }
 
-                if (olderCallLogs.length() > 0) {
-                    binding.olderLogsContainer.setVisibility(View.VISIBLE);
-                    setRecyclerView(olderCallLogs, binding.olderLogsRV);
-                } else {
+                @Override
+                public void onError(Exception e) {
+                    Log.e(TAG, "onCallLogsRetrieved: ", e);
                     binding.olderLogsContainer.setVisibility(View.GONE);
+                    CustomMethods.errorAlert(MainActivity.this, "Error", e.getMessage(), "OK", false);
                 }
-
-            } catch (JSONException e) {
-                Log.e(TAG, "onCreate: ", e);
-                CustomMethods.errorAlert(this, "Error", e.getMessage(), "OK", true);
-            }
+            });
         }
     }
 
-/**************************************************************************************************/
+    /**************************************************************************************************/
 
     private void setRecyclerView(JSONArray callLogs, RecyclerView recyclerView) {
         CallLogsAdapter callLogsAdapter = new CallLogsAdapter(this, callLogs);
@@ -132,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
-/**************************************************************************************************/
+
+    /**************************************************************************************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-/**************************************************************************************************/
+    /**************************************************************************************************/
 
     private void checkAndRequestPermissions() {
         if (areAllPermissionsGranted()) {

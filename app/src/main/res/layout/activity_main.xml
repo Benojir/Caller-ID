@@ -24,12 +24,12 @@
         tools:ignore="HardcodedText" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/callLogsViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar_include">
 
         <LinearLayout
-            android:id="@+id/callLogsViewContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
