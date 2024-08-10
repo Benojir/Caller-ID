@@ -69,7 +69,7 @@ public class GetPhoneNumberInfo {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "onResponse: " + response.code());
+                    Log.d(TAG, "onResponse unsuccessful: " + response.code());
                     new Handler(Looper.getMainLooper()).post(() -> listener.onReceivedResponse(false, "Response code: " + response.code(), null));
                     return;
                 }
