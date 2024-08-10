@@ -50,4 +50,5 @@
     <string name="today_call_logs_header">Today</string>
     <string name="yesterday_call_logs_header">Yesterday</string>
     <string name="older_call_logs_header">Older</string>
+    <string name="app_description_short">Caller Identity offers efficient caller ID and spam blocking via Truecaller\'s API.</string>
 </resources>
