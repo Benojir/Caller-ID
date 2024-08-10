@@ -18,16 +18,18 @@ public class CallsControlHelper {
     private CallScreeningService callScreeningService;
     private Call.Details callDetails;
     private final String phoneNumber;
-    private CallScreeningService.CallResponse.Builder response;
     private final String countryNameCode;
 
     public interface OnDataReceivedListener {
         void onReceived(JSONObject callerInfo);
     }
 
+    public interface OnTaskCompletedListener {
+        void onTaskCompleted(boolean isSuccessful);
+    }
+
     public CallsControlHelper(CallScreeningService callScreeningService, Call.Details callDetails, String phoneNumber) {
         this.context = callScreeningService.getApplicationContext();
-        this.response = new CallScreeningService.CallResponse.Builder();
 
         this.callScreeningService = callScreeningService;
         this.callDetails = callDetails;
@@ -45,13 +47,14 @@ public class CallsControlHelper {
 
 //    ----------------------------------------------------------------------------------------------
 
-    public void blockAllSpamCalls() {
+    public void blockAllSpamCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (callDetails.getCallerNumberVerificationStatus() == Connection.VERIFICATION_STATUS_FAILED) {
                 response.setDisallowCall(true);
                 response.setRejectCall(true);
                 callScreeningService.respondToCall(callDetails, response.build());
+                listener.onTaskCompleted(true);
             }
         }
 
@@ -62,6 +65,7 @@ public class CallsControlHelper {
                         response.setDisallowCall(true);
                         response.setRejectCall(true);
                         callScreeningService.respondToCall(callDetails, response.build());
+                        listener.onTaskCompleted(true);
                     }
                 }
             });
@@ -70,7 +74,7 @@ public class CallsControlHelper {
 
 //    ----------------------------------------------------------------------------------------------
 
-    public void blockTopSpamCalls() {
+    public void blockTopSpamCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
         if (ContactUtils.getContactNameByPhoneNumber(context, phoneNumber).isEmpty()) {
             getCallerInfo(callerInfo -> {
                 if (callerInfo != null) {
@@ -81,6 +85,7 @@ public class CallsControlHelper {
                                 response.setDisallowCall(true);
                                 response.setRejectCall(true);
                                 callScreeningService.respondToCall(callDetails, response.build());
+                                listener.onTaskCompleted(true);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "blockTopSpamCalls: ", e);
@@ -93,15 +98,19 @@ public class CallsControlHelper {
 
 //    ----------------------------------------------------------------------------------------------
 
-    public void rejectAllIncomingCalls() {
+    public void rejectAllIncomingCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
         response.setRejectCall(true);
+        response.setDisallowCall(true);
         callScreeningService.respondToCall(callDetails, response.build());
+        listener.onTaskCompleted(true);
     }
 
-    public void rejectUnknownIncomingCalls() {
+    public void rejectUnknownIncomingCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
         if (ContactUtils.getContactNameByPhoneNumber(context, phoneNumber).isEmpty()) {
             response.setRejectCall(true);
+            response.setDisallowCall(true);
             callScreeningService.respondToCall(callDetails, response.build());
+            listener.onTaskCompleted(true);
         }
     }
 

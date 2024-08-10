@@ -12,6 +12,8 @@ import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import zorro.dimyon.calleridentity.helpers.CallsControlHelper;
 import zorro.dimyon.calleridentity.helpers.ContactUtils;
 
@@ -30,32 +32,37 @@ public class ScreeningService extends CallScreeningService {
         String phoneNumber = handle.getSchemeSpecificPart();
 
         CallsControlHelper controlHelper = new CallsControlHelper(this, callDetails, phoneNumber);
+        CallResponse.Builder response = new CallResponse.Builder();
+
+        AtomicBoolean isCallHandled = new AtomicBoolean(false); // Flag to track if call was handled
 
         if (isIncoming) {
 
-            if (preferences.getBoolean("block_all_spammers", false)) {
-                controlHelper.blockAllSpamCalls();
+            if (!isCallHandled.get() && preferences.getBoolean("block_all_spammers", false)) {
+                controlHelper.blockAllSpamCalls(response, isCallHandled::set);
             } else {
-                if (preferences.getBoolean("block_top_spammers", false)) {
-                    controlHelper.blockTopSpamCalls();
+                if (!isCallHandled.get() && preferences.getBoolean("block_top_spammers", false)) {
+                    controlHelper.blockTopSpamCalls(response, isCallHandled::set);
                 }
             }
 
-            if (preferences.getBoolean("reject_all_incoming_calls", false)) {
-                controlHelper.rejectAllIncomingCalls();
+            if (!isCallHandled.get() && preferences.getBoolean("reject_all_incoming_calls", false)) {
+                controlHelper.rejectAllIncomingCalls(response, isCallHandled::set);
             }
-            if (preferences.getBoolean("reject_unknown_incoming_calls", false)) {
-                controlHelper.rejectUnknownIncomingCalls();
+            if (!isCallHandled.get() && preferences.getBoolean("reject_unknown_incoming_calls", false)) {
+                controlHelper.rejectUnknownIncomingCalls(response, isCallHandled::set);
             }
 
-            if (preferences.getBoolean("floating_window_incoming", false)) {
+            if (!isCallHandled.get() && preferences.getBoolean("floating_window_incoming", false)) {
                 if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
                     showFloatingCallerInfoWindow(controlHelper, phoneNumber);
                 } else {
                     showFloatingWindowForSavedContacts(phoneNumber);
                 }
             } else {
-                showFloatingCallerInfoWindow(controlHelper, phoneNumber);
+                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
+                    showFloatingCallerInfoWindow(controlHelper, phoneNumber);
+                }
             }
         }
 
@@ -74,7 +81,6 @@ public class ScreeningService extends CallScreeningService {
 
         String callerName = ContactUtils.getContactNameByPhoneNumber(this, phoneNumber);
         String callerProfileImageLink = "";
-        String address = "";
         boolean isSpamCall = false;
         String spamType = "";
         String spamScore = "";
@@ -83,7 +89,7 @@ public class ScreeningService extends CallScreeningService {
         intent.putExtra("callerName", callerName);
         intent.putExtra("phoneNumber", phoneNumber);
         intent.putExtra("callerProfileImageLink", callerProfileImageLink);
-        intent.putExtra("address", address);
+        intent.putExtra("address", phoneNumber);
         intent.putExtra("isSpamCall", isSpamCall);
         intent.putExtra("spamType", spamType);
         intent.putExtra("spamScore", spamScore);
