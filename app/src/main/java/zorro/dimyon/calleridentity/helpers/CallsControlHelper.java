@@ -139,7 +139,7 @@ public class CallsControlHelper {
                                 String address = addresses.getJSONObject(0).getString("city");
                                 if (addresses.getJSONObject(0).has("countryCode")) {
                                     String countryCode = addresses.getJSONObject(0).getString("countryCode");
-                                    String countryName = CustomMethods.getCountryNameByCode(countryCode);
+                                    String countryName = CustomMethods.getCountryNameByCountryNameCode(countryCode);
                                     address += ", " + countryName;
                                 }
                                 callerInfo.put("address", address);

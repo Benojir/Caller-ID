@@ -111,9 +111,25 @@ public class CustomMethods {
     }
 //    ----------------------------------------------------------------------------------------------
 
-    public static String getCountryNameByCode(String countryCode) {
-        Locale locale = new Locale("", countryCode);
+    public static String getCountryNameByCountryNameCode(String countryNameCode) {
+        Locale locale = new Locale("", countryNameCode);
         return locale.getDisplayCountry();
+    }
+
+    // Method to get the country ISO code from the country code
+    public static String getISOCodeByDialingCode(int countryCode) {
+        // Create an instance of PhoneNumberUtil
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+
+        // Get the region code (ISO country code) for the given country code
+        String regionCode = phoneNumberUtil.getRegionCodeForCountryCode(countryCode);
+
+        // If regionCode is null or empty, the country code is invalid
+        if (regionCode == null || regionCode.isEmpty()) {
+            return "IN"; // Handle invalid input appropriately
+        }
+
+        return regionCode; // Return the country ISO code (e.g., "IN", "US")
     }
 
 //    ----------------------------------------------------------------------------------------------

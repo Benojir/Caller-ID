@@ -60,6 +60,7 @@
         android:paddingHorizontal="10dp"
         android:paddingVertical="15dp"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         tools:ignore="HardcodedText">
 
         <ImageView
@@ -111,11 +112,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="TOP SPAMMER (Reported 15706 times)"
+            android:text="☠️ Spam number (TOP SPAMMER)"
             android:layout_below="@+id/callerLocationTV"
             android:layout_centerHorizontal="true"
             style="@style/TextAppearance.AppCompat.Body2"
             android:visibility="gone"
+            android:background="@drawable/background_spam_warning_text"
+            android:paddingVertical="5dp"
+            android:paddingHorizontal="10dp"
             android:layout_marginTop="10dp" />
 
     </RelativeLayout>
