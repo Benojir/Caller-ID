@@ -71,7 +71,11 @@ public class LoginHelper {
                                     listener.onFailure("Something went wrong.\n\n" + responseObject);
                                 }
                             } else {
-                                listener.onFailure(responseObject.toString());
+                                if (responseObject.has("message")) {
+                                    listener.onFailure(responseObject.getString("message"));
+                                } else {
+                                    listener.onFailure(responseObject.toString());
+                                }
                             }
                         }
                     }
