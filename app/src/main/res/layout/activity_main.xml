@@ -27,8 +27,9 @@
         android:id="@+id/callLogsViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_include"
         android:paddingTop="10dp"
-        android:layout_below="@+id/toolbar_include">
+        tools:ignore="SpeakableTextPresentCheck">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,15 +41,16 @@
                 android:id="@+id/todayLogsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/today_call_logs_header"
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:padding="10dp"
                     android:layout_marginHorizontal="10dp"
+                    android:padding="10dp"
+                    android:text="@string/today_call_logs_header"
                     android:textColor="?attr/colorAccent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -64,15 +66,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/yesterday_call_logs_header"
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:padding="10dp"
                     android:layout_marginHorizontal="10dp"
+                    android:padding="10dp"
+                    android:text="@string/yesterday_call_logs_header"
                     android:textColor="?attr/colorAccent" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -88,15 +91,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/older_call_logs_header"
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:padding="10dp"
                     android:layout_marginHorizontal="10dp"
+                    android:padding="10dp"
+                    android:text="@string/older_call_logs_header"
                     android:textColor="?attr/colorAccent" />
 
                 <androidx.recyclerview.widget.RecyclerView
