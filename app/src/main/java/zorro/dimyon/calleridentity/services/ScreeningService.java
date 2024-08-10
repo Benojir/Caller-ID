@@ -63,8 +63,6 @@ public class ScreeningService extends CallScreeningService {
             if (preferences.getBoolean("floating_window_outgoing", false)) {
                 if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
                     showFloatingCallerInfoWindow(controlHelper, phoneNumber);
-                } else {
-                    showFloatingWindowForSavedContacts(phoneNumber);
                 }
             }
         }
