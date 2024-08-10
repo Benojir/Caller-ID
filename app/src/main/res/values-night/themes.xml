@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.CallerIdentity" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-         <item name="colorPrimary">@color/theme_color_dark</item>
+        <item name="colorPrimary">@color/theme_color_dark</item>
+        <item name="colorAccent">@color/accent_color_dark</item>
         <item name="textColor">@color/white</item>
     </style>
 </resources>

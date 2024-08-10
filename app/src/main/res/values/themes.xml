@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.CallerIdentity" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/theme_color_light</item>
+        <item name="colorAccent">@color/theme_color_light</item>
         <item name="textColor">@color/black</item>
     </style>
 

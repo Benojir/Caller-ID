@@ -5,4 +5,6 @@
     <color name="red_white">#FFE6E4</color>
     <color name="red">#FF0000</color>
     <color name="theme_color_dark">#673AB7</color>
+    <color name="theme_color_light">#5C00FF</color>
+    <color name="accent_color_dark">#9861FA</color>
 </resources>
