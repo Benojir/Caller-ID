@@ -20,6 +20,7 @@
         android:text="Login with OTP"
         android:layout_centerInParent="true"
         android:visibility="visible"
+        android:textColor="@color/white"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>
