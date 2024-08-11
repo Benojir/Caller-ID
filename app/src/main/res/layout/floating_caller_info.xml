@@ -3,37 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_normal_floating_caller_info"
     tools:ignore="HardcodedText"
     android:id="@+id/floatingCallerInfoMainLayout"
     android:padding="15dp">
 
-    <FrameLayout
-        android:id="@+id/frameImageView"
-        android:layout_width="wrap_content"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/callerProfileIV"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:minWidth="45dp"
+        android:contentDescription="Profile DP"
+        android:src="@drawable/verified_user_24"
+        android:background="@color/white"
+        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+        android:adjustViewBounds="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true">
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:background="@drawable/background_circle_shape_imageview"
-            android:contentDescription="Caller Info"
-            android:scaleType="centerCrop"
-            android:src="@drawable/verified_user_24"
-            tools:ignore="ImageContrastCheck" />
-
-    </FrameLayout>
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_toEndOf="@+id/frameImageView"
+        android:layout_toEndOf="@+id/callerProfileIV"
         android:paddingHorizontal="15dp"
         android:gravity="center_vertical"
         android:orientation="vertical">

@@ -13,12 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import zorro.dimyon.calleridentity.BuildConfig;
 import zorro.dimyon.calleridentity.R;
@@ -82,7 +82,7 @@ public class PopupService extends Service {
         SwipeDismissLayout floatingCallerInfoMainLayout = popupView.findViewById(R.id.floatingCallerInfoMainLayout);
         TextView callerNameTV = popupView.findViewById(R.id.callerNameTV);
         TextView callerAddressTV = popupView.findViewById(R.id.callerAddressTV);
-        ImageView callerProfileIV = popupView.findViewById(R.id.imageView);
+        ShapeableImageView callerProfileIV = popupView.findViewById(R.id.callerProfileIV);
 
         callerNameTV.setText(callerName);
         callerAddressTV.setText(address);
