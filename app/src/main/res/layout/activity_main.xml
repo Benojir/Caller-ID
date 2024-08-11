@@ -24,75 +24,82 @@
         android:textColor="@color/white"
         tools:ignore="HardcodedText" />
 
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/afterLoginDesignContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar_include"
         android:visibility="visible"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:fillViewport="true">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="200dp"
-            android:src="@drawable/main_activity_image"
-            android:layout_marginTop="100dp"
-            android:adjustViewBounds="true"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:contentDescription="image"
-            tools:ignore="HardcodedText" />
-
-        <LinearLayout
-            style="?android:attr/buttonBarStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/shortDescriptionTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/settingBtn"
-                style="?android:attr/buttonBarButtonStyle"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SETTINGS"
-                app:icon="@drawable/settings_24"
-                app:iconTint="?attr/textColor"
-                android:textColor="?attr/textColor"
-                android:layout_marginEnd="10dp"
+                android:maxWidth="200dp"
+                android:src="@drawable/main_activity_image"
+                android:layout_marginTop="100dp"
+                android:adjustViewBounds="true"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="image"
                 tools:ignore="HardcodedText" />
 
-            <Button
-                android:id="@+id/searchBtn"
-                style="?android:attr/buttonBarButtonStyle"
+            <LinearLayout
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/shortDescriptionTV"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/settingBtn"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SETTINGS"
+                    app:icon="@drawable/settings_24"
+                    app:iconTint="?attr/textColor"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginEnd="10dp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/searchBtn"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SEARCH"
+                    app:icon="@drawable/search_24"
+                    app:iconTint="?attr/textColor"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginStart="10dp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/shortDescriptionTV"
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SEARCH"
-                app:icon="@drawable/search_24"
-                app:iconTint="?attr/textColor"
-                android:textColor="?attr/textColor"
-                android:layout_marginStart="10dp"
-                tools:ignore="HardcodedText" />
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:padding="20dp"
+                android:text="@string/app_description_short"
+                android:textAlignment="center"
+                android:textColor="@color/grey"
+                tools:ignore="TextContrastCheck" />
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/shortDescriptionTV"
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:padding="20dp"
-            android:text="@string/app_description_short"
-            android:textAlignment="center"
-            android:textColor="@color/grey"
-            tools:ignore="TextContrastCheck" />
-    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>
