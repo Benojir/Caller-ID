@@ -36,7 +36,6 @@ public class ScreeningService extends CallScreeningService {
         CallsControlHelper controlHelper = new CallsControlHelper(this, callDetails, phoneNumber);
         CallResponse.Builder response = new CallResponse.Builder();
 
-        AtomicBoolean isCallHandled = new AtomicBoolean(false); // Flag to track if callback was handled
         AtomicBoolean allowIncomingFloatingForContacts = new AtomicBoolean(preferences.getBoolean("is_incoming_floating_allowed_for_contacts_too", false));
 
         if (isIncoming) {
@@ -71,8 +70,6 @@ public class ScreeningService extends CallScreeningService {
 
                                 controlHelper.blockAllSpamCalls(response, (isSuccessful, callerInfo) -> {
 
-                                    isCallHandled.set(isSuccessful);
-
                                     if (isSuccessful) {
                                         NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
                                     } else { // if the incoming call is not a spam call then show the floating window
@@ -92,8 +89,6 @@ public class ScreeningService extends CallScreeningService {
                                 if (notInContacts) { // get incoming phone number's information when it is not saved in contacts
 
                                     controlHelper.blockTopSpamCalls(response, (isSuccessful, callerInfo) -> {
-
-                                        isCallHandled.set(isSuccessful);
 
                                         if (isSuccessful) {
                                             NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
