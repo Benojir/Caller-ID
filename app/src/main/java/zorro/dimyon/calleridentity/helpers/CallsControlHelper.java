@@ -115,24 +115,6 @@ public class CallsControlHelper {
 
 //    ----------------------------------------------------------------------------------------------
 
-    public void rejectAllIncomingCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
-        response.setRejectCall(true);
-        response.setDisallowCall(true);
-        callScreeningService.respondToCall(callDetails, response.build());
-        listener.onTaskCompleted(true, null);
-    }
-
-    public void rejectUnknownIncomingCalls(CallScreeningService.CallResponse.Builder response, OnTaskCompletedListener listener) {
-        if (ContactUtils.getContactNameByPhoneNumber(context, phoneNumber).isEmpty()) {
-            response.setRejectCall(true);
-            response.setDisallowCall(true);
-            callScreeningService.respondToCall(callDetails, response.build());
-            listener.onTaskCompleted(true, null);
-        }
-    }
-
-//    ----------------------------------------------------------------------------------------------
-
     public void getCallerInfo(OnDataReceivedListener listener) {
 
         GetPhoneNumberInfo getPhoneNumberInfo = new GetPhoneNumberInfo(context, phoneNumber, countryNameCode);
