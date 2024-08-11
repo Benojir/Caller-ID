@@ -23,7 +23,7 @@
             android:adjustViewBounds="true"
             android:background="@drawable/background_circle_shape_imageview"
             android:contentDescription="Caller Info"
-            android:padding="10dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/verified_user_24"
             tools:ignore="ImageContrastCheck" />
 
