@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import zorro.dimyon.calleridentity.helpers.CallsControlHelper;
 import zorro.dimyon.calleridentity.helpers.ContactUtils;
+import zorro.dimyon.calleridentity.helpers.NotificationHelper;
 
 public class ScreeningService extends CallScreeningService {
     private static final String TAG = "MADARA";
@@ -54,7 +55,9 @@ public class ScreeningService extends CallScreeningService {
 
                         isCallHandled.set(isSuccessful);
 
-                        if (!isSuccessful) { // if the incoming call is not a spam call then show the floating window
+                        if (isSuccessful) {
+                            NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
+                        } else { // if the incoming call is not a spam call then show the floating window
                             showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
                         }
                     });
@@ -73,7 +76,9 @@ public class ScreeningService extends CallScreeningService {
 
                             isCallHandled.set(isSuccessful);
 
-                            if (!isSuccessful) { // if the incoming call is not a high risk top spam call then show the floating window
+                            if (isSuccessful) {
+                                NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
+                            } else { // if the incoming call is not a spam call then show the floating window
                                 showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
                             }
                         });
