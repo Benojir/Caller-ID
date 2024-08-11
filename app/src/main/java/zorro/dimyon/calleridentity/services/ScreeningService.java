@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,41 +36,68 @@ public class ScreeningService extends CallScreeningService {
         CallResponse.Builder response = new CallResponse.Builder();
 
         AtomicBoolean isCallHandled = new AtomicBoolean(false); // Flag to track if callback was handled
+        AtomicBoolean allowIncomingFloatingForContacts = new AtomicBoolean(preferences.getBoolean("is_incoming_floating_allowed_for_contacts_too", false));
 
         if (isIncoming) {
 
-            if (!isCallHandled.get() && preferences.getBoolean("block_all_spammers", false)) {
-                controlHelper.blockAllSpamCalls(response, isCallHandled::set);
-            } else {
-                if (!isCallHandled.get() && preferences.getBoolean("block_top_spammers", false)) {
-                    controlHelper.blockTopSpamCalls(response, isCallHandled::set);
-                }
-            }
-
             if (!isCallHandled.get() && preferences.getBoolean("reject_all_incoming_calls", false)) {
-                controlHelper.rejectAllIncomingCalls(response, isCallHandled::set);
+                controlHelper.rejectAllIncomingCalls(response, (isSuccessful, callerInfo) -> isCallHandled.set(isSuccessful));
             }
             if (!isCallHandled.get() && preferences.getBoolean("reject_unknown_incoming_calls", false)) {
-                controlHelper.rejectUnknownIncomingCalls(response, isCallHandled::set);
+                controlHelper.rejectUnknownIncomingCalls(response, (isSuccessful, callerInfo) -> isCallHandled.set(isSuccessful));
             }
 
-            if (!isCallHandled.get() && preferences.getBoolean("floating_window_incoming", false)) {
-                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
-                    showFloatingCallerInfoWindow(controlHelper, phoneNumber);
-                } else {
-                    showFloatingWindowForSavedContacts(phoneNumber);
+            if (!isCallHandled.get() && preferences.getBoolean("block_all_spammers", false)) {
+
+                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) { // get incoming phone number's information when it is not saved in contacts
+                    controlHelper.blockAllSpamCalls(response, (isSuccessful, callerInfo) -> {
+
+                        isCallHandled.set(isSuccessful);
+
+                        if (!isSuccessful) { // if the incoming call is not a spam call then show the floating window
+                            showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
+                        }
+                    });
+                } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
+                    if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
+                        showFloatingCallerInfoWindow(null, phoneNumber);
+                    }
                 }
-            } else {
-                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
-                    showFloatingCallerInfoWindow(controlHelper, phoneNumber);
+
+            } else { // if block_all_spammers == false then this codes block will be executed
+
+                if (!isCallHandled.get() && preferences.getBoolean("block_top_spammers", false)) {
+
+                    if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) { // get incoming phone number's information when it is not saved in contacts
+                        controlHelper.blockTopSpamCalls(response, (isSuccessful, callerInfo) -> {
+
+                            isCallHandled.set(isSuccessful);
+
+                            if (!isSuccessful) { // if the incoming call is not a high risk top spam call then show the floating window
+                                showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
+                            }
+                        });
+
+                    } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
+                        if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
+                            showFloatingCallerInfoWindow(null, phoneNumber);
+                        }
+                    }
+
+                } else { // showing floating window for both saved and unsaved contacts if both spam filtering options are turned off
+                    if (allowIncomingFloatingForContacts.get()) {
+                        showFloatingCallerInfoWindow(null, phoneNumber);
+                    } else {
+                        controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber));
+                    }
                 }
             }
         }
 
         if (isOutgoing) {
-            if (preferences.getBoolean("floating_window_outgoing", false)) {
+            if (preferences.getBoolean("is_outgoing_floating_allowed_for_unknown_numbers", false)) { // showing floating window for unknown numbers if is_outgoing_floating_allowed_for_unknown_numbers == true
                 if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
-                    showFloatingCallerInfoWindow(controlHelper, phoneNumber);
+                    controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber));
                 }
             }
         }
@@ -77,74 +105,72 @@ public class ScreeningService extends CallScreeningService {
 
 //    ----------------------------------------------------------------------------------------------
 
-    private void showFloatingWindowForSavedContacts(String phoneNumber) {
+    private void showFloatingCallerInfoWindow(JSONObject callerInfo, String phoneNumber) {
 
-        String callerName = ContactUtils.getContactNameByPhoneNumber(this, phoneNumber);
-        String callerProfileImageLink = "";
-        boolean isSpamCall = false;
-        String spamType = "";
-        String spamScore = "";
+        if (callerInfo == null) {
+            String callerName = ContactUtils.getContactNameByPhoneNumber(this, phoneNumber);
+            String callerProfileImageLink = "";
+            boolean isSpamCall = false;
+            String spamType = "";
+            String spamScore = "";
 
-        Intent intent = new Intent(this, PopupService.class);
-        intent.putExtra("callerName", callerName);
-        intent.putExtra("phoneNumber", phoneNumber);
-        intent.putExtra("callerProfileImageLink", callerProfileImageLink);
-        intent.putExtra("address", phoneNumber);
-        intent.putExtra("isSpamCall", isSpamCall);
-        intent.putExtra("spamType", spamType);
-        intent.putExtra("spamScore", spamScore);
-        startForegroundService(intent);
-    }
-//    ----------------------------------------------------------------------------------------------
-
-    private void showFloatingCallerInfoWindow(CallsControlHelper controlHelper, String phoneNumber) {
-
-        controlHelper.getCallerInfo(callerInfo -> {
-
-            if (callerInfo != null) {
-
-                try {
-                    String callerName = callerInfo.getString("callerName");
-                    String callerProfileImageLink = "";
-                    String address = "";
-                    boolean isSpamCall = false;
-                    String spamType = "";
-                    String spamScore = "";
-
-                    if (callerInfo.has("callerProfileImageLink")) {
-                        callerProfileImageLink = callerInfo.getString("callerProfileImageLink");
-                    }
-
-                    if (callerInfo.has("address")) {
-                        address = callerInfo.getString("address");
-                    }
-
-                    if (callerInfo.has("isSpamCall")) {
-                        isSpamCall = callerInfo.getBoolean("isSpamCall");
-                    }
-
-                    if (callerInfo.has("spamType")) {
-                        spamType = callerInfo.getString("spamType");
-                    }
-
-                    if (callerInfo.has("spamScore")) {
-                        spamScore = callerInfo.getString("spamScore");
-                    }
-
-                    Intent intent = new Intent(this, PopupService.class);
-                    intent.putExtra("callerName", callerName);
-                    intent.putExtra("phoneNumber", phoneNumber);
-                    intent.putExtra("callerProfileImageLink", callerProfileImageLink);
-                    intent.putExtra("address", address);
-                    intent.putExtra("isSpamCall", isSpamCall);
-                    intent.putExtra("spamType", spamType);
-                    intent.putExtra("spamScore", spamScore);
-                    startForegroundService(intent);
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "onScreenCall: ", e);
-                }
+            if (callerName.isEmpty()) {
+                callerName = phoneNumber;
             }
-        });
+
+            Intent intent = new Intent(this, PopupService.class);
+            intent.putExtra("callerName", callerName);
+            intent.putExtra("phoneNumber", phoneNumber);
+            intent.putExtra("callerProfileImageLink", callerProfileImageLink);
+            intent.putExtra("address", phoneNumber);
+            intent.putExtra("isSpamCall", isSpamCall);
+            intent.putExtra("spamType", spamType);
+            intent.putExtra("spamScore", spamScore);
+            startForegroundService(intent);
+
+        } else {
+
+            try {
+                String callerName = callerInfo.getString("callerName");
+                String callerProfileImageLink = "";
+                String address = "";
+                boolean isSpamCall = false;
+                String spamType = "";
+                String spamScore = "";
+
+                if (callerInfo.has("callerProfileImageLink")) {
+                    callerProfileImageLink = callerInfo.getString("callerProfileImageLink");
+                }
+
+                if (callerInfo.has("address")) {
+                    address = callerInfo.getString("address");
+                }
+
+                if (callerInfo.has("isSpamCall")) {
+                    isSpamCall = callerInfo.getBoolean("isSpamCall");
+                }
+
+                if (callerInfo.has("spamType")) {
+                    spamType = callerInfo.getString("spamType");
+                }
+
+                if (callerInfo.has("spamScore")) {
+                    spamScore = callerInfo.getString("spamScore");
+                }
+
+                Intent intent = new Intent(this, PopupService.class);
+                intent.putExtra("callerName", callerName);
+                intent.putExtra("phoneNumber", phoneNumber);
+                intent.putExtra("callerProfileImageLink", callerProfileImageLink);
+                intent.putExtra("address", address);
+                intent.putExtra("isSpamCall", isSpamCall);
+                intent.putExtra("spamType", spamType);
+                intent.putExtra("spamScore", spamScore);
+                startForegroundService(intent);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "onScreenCall: ", e);
+            }
+        }
     }
 }

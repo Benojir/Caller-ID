@@ -19,13 +19,13 @@
     <PreferenceCategory app:title="@string/floating_window_header">
 
         <SwitchPreferenceCompat
-            app:key="floating_window_incoming"
+            app:key="is_incoming_floating_allowed_for_contacts_too"
             app:summaryOn="@string/floating_window_incoming_summary_on"
             app:summaryOff="@string/floating_window_incoming_summary_off"
             app:title="@string/floating_window_incoming_title" />
 
         <SwitchPreferenceCompat
-            app:key="floating_window_outgoing"
+            app:key="is_outgoing_floating_allowed_for_unknown_numbers"
             app:summaryOn="@string/floating_window_outgoing_summary_on"
             app:summaryOff="@string/floating_window_outgoing_summary_off"
             app:title="@string/floating_window_outgoing_title" />
