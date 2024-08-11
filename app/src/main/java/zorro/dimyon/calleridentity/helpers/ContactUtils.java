@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.telephony.PhoneNumberUtils;
 
@@ -49,7 +51,7 @@ public class ContactUtils {
 
             // Run the listener callback on the main thread
             final String result = contactName;
-            ((android.app.Activity) context).runOnUiThread(() -> listener.onContactNameRetrieved(result));
+            new Handler(Looper.getMainLooper()).post(() -> listener.onContactNameRetrieved(result));
         });
     }
 }
