@@ -10,30 +10,46 @@ import android.telephony.PhoneNumberUtils;
 
 import androidx.core.content.ContextCompat;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ContactUtils {
 
-    public static String getContactNameByPhoneNumber(Context context, String phoneNumber) {
-        String contactName = "";
+    public interface OnContactNameRetrievedListener {
+        void onContactNameRetrieved(String contactName);
+    }
 
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
+    public static void getContactNameByPhoneNumber(Context context, String phoneNumber, OnContactNameRetrievedListener listener) {
+        executorService.execute(() -> {
+            String contactName = "";
 
-            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
 
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    String storedNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    if (PhoneNumberUtils.compare(storedNumber, phoneNumber)) {
-                        contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        break;
+                Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+                if (cursor != null) {
+                    try {
+                        while (cursor.moveToNext()) {
+                            String storedNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            if (PhoneNumberUtils.compare(storedNumber, phoneNumber)) {
+                                contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                break; // Exit the loop as we found the contact
+                            }
+                        }
+                    } finally {
+                        cursor.close(); // Ensure the cursor is closed in case of an exception
                     }
                 }
-                cursor.close();
             }
-        }
 
-        return contactName;
+            // Run the listener callback on the main thread
+            final String result = contactName;
+            ((android.app.Activity) context).runOnUiThread(() -> listener.onContactNameRetrieved(result));
+        });
     }
 }

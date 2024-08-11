@@ -41,79 +41,105 @@ public class ScreeningService extends CallScreeningService {
 
         if (isIncoming) {
 
-            if (!isCallHandled.get() && preferences.getBoolean("reject_all_incoming_calls", false)) {
-                controlHelper.rejectAllIncomingCalls(response, (isSuccessful, callerInfo) -> isCallHandled.set(isSuccessful));
-            }
-            if (!isCallHandled.get() && preferences.getBoolean("reject_unknown_incoming_calls", false)) {
-                controlHelper.rejectUnknownIncomingCalls(response, (isSuccessful, callerInfo) -> isCallHandled.set(isSuccessful));
-            }
+            if (preferences.getBoolean("reject_all_incoming_calls", false)) {
+                response.setRejectCall(true);
+                response.setDisallowCall(true);
+                respondToCall(callDetails, response.build());
 
-            if (!isCallHandled.get() && preferences.getBoolean("block_all_spammers", false)) {
+            } else {
 
-                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) { // get incoming phone number's information when it is not saved in contacts
-                    controlHelper.blockAllSpamCalls(response, (isSuccessful, callerInfo) -> {
+                ContactUtils.getContactNameByPhoneNumber(this, phoneNumber, contactName -> {
 
-                        isCallHandled.set(isSuccessful);
+                    boolean notInContacts = contactName.isEmpty();
 
-                        if (isSuccessful) {
-                            NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
-                        } else { // if the incoming call is not a spam call then show the floating window
-                            showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
-                        }
-                    });
-                } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
-                    if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
-                        showFloatingCallerInfoWindow(null, phoneNumber);
-                    }
-                }
+                    if (preferences.getBoolean("reject_unknown_incoming_calls", false)) {
 
-            } else { // if block_all_spammers == false then this codes block will be executed
-
-                if (!isCallHandled.get() && preferences.getBoolean("block_top_spammers", false)) {
-
-                    if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) { // get incoming phone number's information when it is not saved in contacts
-                        controlHelper.blockTopSpamCalls(response, (isSuccessful, callerInfo) -> {
-
-                            isCallHandled.set(isSuccessful);
-
-                            if (isSuccessful) {
-                                NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
-                            } else { // if the incoming call is not a spam call then show the floating window
-                                showFloatingCallerInfoWindow(callerInfo, phoneNumber); // showing floating window for unsaved non spam calls
+                        if (notInContacts) {
+                            response.setRejectCall(true);
+                            response.setDisallowCall(true);
+                            respondToCall(callDetails, response.build());
+                        } else {
+                            if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
+                                showFloatingCallerInfoWindow(null, phoneNumber, contactName);
                             }
-                        });
+                        }
+                    } else {
 
-                    } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
-                        if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
-                            showFloatingCallerInfoWindow(null, phoneNumber);
+                        if (preferences.getBoolean("block_all_spammers", false)) {
+
+                            if (notInContacts) { // get incoming phone number's information when it is not saved in contacts
+
+                                controlHelper.blockAllSpamCalls(response, (isSuccessful, callerInfo) -> {
+
+                                    isCallHandled.set(isSuccessful);
+
+                                    if (isSuccessful) {
+                                        NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
+                                    } else { // if the incoming call is not a spam call then show the floating window
+                                        showFloatingCallerInfoWindow(callerInfo, phoneNumber, contactName); // showing floating window for unsaved non spam calls
+                                    }
+                                });
+                            } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
+                                if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
+                                    showFloatingCallerInfoWindow(null, phoneNumber, contactName);
+                                }
+                            }
+
+                        } else { // if block_all_spammers == false then this codes block will be executed
+
+                            if (preferences.getBoolean("block_top_spammers", false)) {
+
+                                if (notInContacts) { // get incoming phone number's information when it is not saved in contacts
+
+                                    controlHelper.blockTopSpamCalls(response, (isSuccessful, callerInfo) -> {
+
+                                        isCallHandled.set(isSuccessful);
+
+                                        if (isSuccessful) {
+                                            NotificationHelper.showBlockedCallNotification(this, callerInfo, phoneNumber); // showing notification for blocked spam calls
+                                        } else { // if the incoming call is not a spam call then show the floating window
+                                            showFloatingCallerInfoWindow(callerInfo, phoneNumber, contactName); // showing floating window for unsaved non spam calls
+                                        }
+                                    });
+
+                                } else { // if incoming phone number is saved in contacts then this codes block will be executed. No need to check for spam
+                                    if (allowIncomingFloatingForContacts.get()) { // showing floating window for saved contacts if allowIncomingFloatingForContacts is true
+                                        showFloatingCallerInfoWindow(null, phoneNumber, contactName);
+                                    }
+                                }
+
+                            } else { // showing floating window for both saved and unsaved contacts if both spam filtering options are turned off
+                                if (allowIncomingFloatingForContacts.get()) {
+                                    showFloatingCallerInfoWindow(null, phoneNumber, contactName);
+                                } else {
+                                    controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber, contactName));
+                                }
+                            }
                         }
                     }
-
-                } else { // showing floating window for both saved and unsaved contacts if both spam filtering options are turned off
-                    if (allowIncomingFloatingForContacts.get()) {
-                        showFloatingCallerInfoWindow(null, phoneNumber);
-                    } else {
-                        controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber));
-                    }
-                }
+                });
             }
         }
 
+        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         if (isOutgoing) {
             if (preferences.getBoolean("is_outgoing_floating_allowed_for_unknown_numbers", false)) { // showing floating window for unknown numbers if is_outgoing_floating_allowed_for_unknown_numbers == true
-                if (ContactUtils.getContactNameByPhoneNumber(this, phoneNumber).isEmpty()) {
-                    controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber));
-                }
+                ContactUtils.getContactNameByPhoneNumber(this, phoneNumber, contactName -> {
+                    if (contactName.isEmpty()) {
+                        controlHelper.getCallerInfo(callerInfo -> showFloatingCallerInfoWindow(callerInfo, phoneNumber, contactName));
+                    }
+                });
             }
         }
     }
 
 //    ----------------------------------------------------------------------------------------------
 
-    private void showFloatingCallerInfoWindow(JSONObject callerInfo, String phoneNumber) {
+    private void showFloatingCallerInfoWindow(JSONObject callerInfo, String phoneNumber, String contactName) {
 
         if (callerInfo == null) {
-            String callerName = ContactUtils.getContactNameByPhoneNumber(this, phoneNumber);
+            String callerName = contactName;
             String callerProfileImageLink = "";
             boolean isSpamCall = false;
             String spamType = "";
